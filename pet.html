@@ -1,1391 +1,1725 @@
 <!DOCTYPE html>
 <html lang="zh-CN">
-    
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>宠物用品从0到1选品线上销售分析报告</title>
-        <script src="https://cdn.tailwindcss.com"></script>
-        <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
-        <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
-        <style type="text/tailwindcss">@layer utilities { .content-auto { content-visibility: auto; } }</style>
-        <script>tailwind.config = {
-                theme: {
-                    extend: {
-                        colors: {
-                            primary: '#165DFF',
-                            secondary: '#36D399',
-                            accent: '#F87272',
-                            neutral: '#64748B',
-                        },
-                        fontFamily: {
-                            inter: ['Inter', 'sans-serif'],
-                        },
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>宠物用品从0到1选品线上销售分析报告</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/echarts@5.4.3/dist/echarts.min.js"></script>
+    <style type="text/tailwindcss">
+        @layer utilities {
+            .content-auto {
+                content-visibility: auto;
+            }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#165DFF',
+                        secondary: '#36D399',
+                        accent: '#F87272',
+                        neutral: '#64748B',
                     },
-                }
-            }</script>
-    </head>
-    
-    <body class="font-inter bg-gray-50 text-gray-800">
-        <!-- 导航栏 -->
-        <nav class="bg-white shadow-md fixed w-full top-0 z-50 transition-all duration-300" id="navbar">
-            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                    fontFamily: {
+                        inter: ['Inter', 'sans-serif'],
+                    },
+                },
+            }
+        }
+    </script>
+</head>
+<body class="font-inter bg-gray-50 text-gray-800">
+    <!-- 导航栏 -->
+    <nav class="bg-white shadow-md fixed w-full top-0 z-50 transition-all duration-300" id="navbar">
+        <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+            <div class="flex items-center space-x-2">
+                <i class="fa fa-paw text-primary text-2xl"></i>
+                <span class="text-xl font-bold text-gray-800">宠物用品选品分析</span>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#market" class="text-gray-600 hover:text-primary transition-colors">市场分析</a>
+                <a href="#strategy" class="text-gray-600 hover:text-primary transition-colors">选品策略</a>
+                <a href="#business" class="text-gray-600 hover:text-primary transition-colors">差异化打法</a>
+                <a href="#drainage" class="text-gray-600 hover:text-primary transition-colors">引流策略</a>
+                <a href="#top10" class="text-gray-600 hover:text-primary transition-colors">TOP10分析</a>
+                <a href="#classification" class="text-gray-600 hover:text-primary transition-colors">行业分类</a>
+                <a href="#execution" class="text-gray-600 hover:text-primary transition-colors">执行计划</a>
+            </div>
+            <button class="md:hidden text-gray-600" id="menuBtn">
+                <i class="fa fa-bars text-xl"></i>
+            </button>
+        </div>
+        <!-- 移动端菜单 -->
+        <div class="md:hidden hidden bg-white w-full" id="mobileMenu">
+            <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
+                <a href="#market" class="text-gray-600 hover:text-primary py-2 transition-colors">市场分析</a>
+                <a href="#strategy" class="text-gray-600 hover:text-primary py-2 transition-colors">选品策略</a>
+                <a href="#business" class="text-gray-600 hover:text-primary py-2 transition-colors">差异化打法</a>
+                <a href="#drainage" class="text-gray-600 hover:text-primary py-2 transition-colors">引流策略</a>
+                <a href="#top10" class="text-gray-600 hover:text-primary py-2 transition-colors">TOP10分析</a>
+                <a href="#classification" class="text-gray-600 hover:text-primary py-2 transition-colors">行业分类</a>
+                <a href="#execution" class="text-gray-600 hover:text-primary py-2 transition-colors">执行计划</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 封面页 -->
+    <section class="pt-24 pb-16 bg-gradient-to-br from-primary/5 to-secondary/5">
+        <div class="container mx-auto px-4 text-center">
+            <div class="inline-block mb-6">
+                <i class="fa fa-paw text-primary text-6xl"></i>
+            </div>
+            <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-gray-800 mb-4">宠物用品从0到1选品线上销售分析报告</h1>
+            <p class="text-[clamp(1.2rem,3vw,1.5rem)] text-gray-600 mb-8">基于用户痛点的选品策略与盈利模式</p>
+            <p class="text-[clamp(1rem,1vw,1rem)] text-gray-600 mb-5">13169692696</p>
+            <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8 text-gray-600">
                 <div class="flex items-center space-x-2">
-                    <i class="fa fa-paw text-primary text-2xl"></i>
-                    <span class="text-xl font-bold text-gray-800">宠物用品选品分析</span></div>
-                <div class="hidden md:flex space-x-6">
-                    <a href="#market" class="text-gray-600 hover:text-primary transition-colors">市场分析</a>
-                    <a href="#strategy" class="text-gray-600 hover:text-primary transition-colors">选品策略</a>
-                    <a href="#business" class="text-gray-600 hover:text-primary transition-colors">差异化打法</a>
-                    <a href="#drainage" class="text-gray-600 hover:text-primary transition-colors">引流策略</a>
-                    <a href="#top10" class="text-gray-600 hover:text-primary transition-colors">TOP10分析</a>
-                    <a href="#classification" class="text-gray-600 hover:text-primary transition-colors">行业分类</a>
-                    <a href="#execution" class="text-gray-600 hover:text-primary transition-colors">执行计划</a></div>
-                <button class="md:hidden text-gray-600" id="menuBtn">
-                    <i class="fa fa-bars text-xl"></i>
-                </button>
-            </div>
-            <!-- 移动端菜单 -->
-            <div class="md:hidden hidden bg-white w-full" id="mobileMenu">
-                <div class="container mx-auto px-4 py-2 flex flex-col space-y-3">
-                    <a href="#market" class="text-gray-600 hover:text-primary py-2 transition-colors">市场分析</a>
-                    <a href="#strategy" class="text-gray-600 hover:text-primary py-2 transition-colors">选品策略</a>
-                    <a href="#business" class="text-gray-600 hover:text-primary py-2 transition-colors">差异化打法</a>
-                    <a href="#drainage" class="text-gray-600 hover:text-primary py-2 transition-colors">引流策略</a>
-                    <a href="#top10" class="text-gray-600 hover:text-primary py-2 transition-colors">TOP10分析</a>
-                    <a href="#classification" class="text-gray-600 hover:text-primary py-2 transition-colors">行业分类</a>
-                    <a href="#execution" class="text-gray-600 hover:text-primary py-2 transition-colors">执行计划</a></div>
-            </div>
-        </nav>
-        <!-- 封面页 -->
-        <section class="pt-24 pb-16 bg-gradient-to-br from-primary/5 to-secondary/5">
-            <div class="container mx-auto px-4 text-center">
-                <div class="inline-block mb-6">
-                    <i class="fa fa-paw text-primary text-6xl"></i>
-                </div>
-                <h1 class="text-[clamp(2rem,5vw,3.5rem)] font-bold text-gray-800 mb-4">宠物用品从0到1选品线上销售分析报告</h1>
-                <p class="text-[clamp(1.2rem,3vw,1.5rem)] text-gray-600 mb-8">基于用户痛点的选品策略与盈利模式</p>
-                <p class="text-[clamp(1rem,1vw,1rem)] text-gray-600 mb-5">13169692696</p>
-                <div class="flex flex-col md:flex-row justify-center items-center space-y-4 md:space-y-0 md:space-x-8 text-gray-600">
-                    <div class="flex items-center space-x-2">
-                        <i class="fa fa-calendar text-primary"></i>
-                        <span>时间：2026年3月1日</span></div>
+                    <i class="fa fa-calendar text-primary"></i>
+                    <span>时间：2026年3月1日</span>
                 </div>
             </div>
-        </section>
-        <!-- 目录页 -->
-        <section class="py-16 bg-white">
-            <div class="container mx-auto px-4">
-                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12 section-title">报告目录</h2>
-                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                    <div class="bg-gray-50 rounded-xl p-6 card">
-                        <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
-                            <i class="fa fa-bar-chart mr-2"></i>市场分析</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>市场现状与用户痛点分析</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>行业现状与机会分析</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>信任危机深度剖析</span></li>
-                        </ul>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-6 card">
-                        <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
-                            <i class="fa fa-shopping-cart mr-2"></i>选品策略</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>核心选品策略总览</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>解决用户迷茫的选品方案</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>解决信任危机的选品方案</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>低毛利引流+高利润收割矩阵</span></li>
-                        </ul>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-6 card">
-                        <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
-                            <i class="fa fa-lightbulb-o mr-2"></i>差异化打法</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>定制化宠物配餐计划</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>智能硬件布局策略</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>网易严选模式参考</span></li>
-                        </ul>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-6 card">
-                        <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
-                            <i class="fa fa-users mr-2"></i>引流策略规划</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>不同资金段的引流方案</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>宠物配餐计划小程序</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>用户转化流程设计</span></li>
-                        </ul>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-6 card">
-                        <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
-                            <i class="fa fa-trophy mr-2"></i>TOP10分析</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>行业TOP10品牌分析</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>麦富迪案例深度拆解</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>头部品牌打法借鉴</span></li>
-                        </ul>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-6 card">
-                        <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
-                            <i class="fa fa-sitemap mr-2"></i>行业分类</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>宠物用品分类及定义</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>重点企业发展潜力排名</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>线上线下发展策略</span></li>
-                        </ul>
-                    </div>
-                    <div class="bg-gray-50 rounded-xl p-6 card">
-                        <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
-                            <i class="fa fa-road mr-2"></i>执行计划</h3>
-                        <ul class="space-y-2 text-gray-600">
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>MVP启动策略</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>渠道规划与执行时间轴</span></li>
-                            <li class="flex items-start">
-                                <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
-                                <span>总结与展望</span></li>
-                        </ul>
-                    </div>
+        </div>
+    </section>
+
+    <!-- 目录页 -->
+    <section class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12 section-title">报告目录</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                <div class="bg-gray-50 rounded-xl p-6 card">
+                    <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
+                        <i class="fa fa-bar-chart mr-2"></i>
+                        市场分析
+                    </h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>市场现状与用户痛点分析</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>行业现状与机会分析</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>信任危机深度剖析</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-6 card">
+                    <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
+                        <i class="fa fa-shopping-cart mr-2"></i>
+                        选品策略
+                    </h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>核心选品策略总览</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>解决用户迷茫的选品方案</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>解决信任危机的选品方案</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>低毛利引流+高利润收割矩阵</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-6 card">
+                    <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
+                        <i class="fa fa-lightbulb-o mr-2"></i>
+                        差异化打法
+                    </h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>定制化宠物配餐计划</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>智能硬件布局策略</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>网易严选模式参考</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-6 card">
+                    <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
+                        <i class="fa fa-users mr-2"></i>
+                        引流策略规划
+                    </h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>不同资金段的引流方案</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>宠物配餐计划小程序</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>用户转化流程设计</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-6 card">
+                    <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
+                        <i class="fa fa-trophy mr-2"></i>
+                        TOP10分析
+                    </h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>行业TOP10品牌分析</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>麦富迪案例深度拆解</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>头部品牌打法借鉴</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-6 card">
+                    <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
+                        <i class="fa fa-sitemap mr-2"></i>
+                        行业分类
+                    </h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>宠物用品分类及定义</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>重点企业发展潜力排名</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>线上线下发展策略</span>
+                        </li>
+                    </ul>
+                </div>
+                <div class="bg-gray-50 rounded-xl p-6 card">
+                    <h3 class="text-xl font-semibold text-primary mb-4 flex items-center">
+                        <i class="fa fa-road mr-2"></i>
+                        执行计划
+                    </h3>
+                    <ul class="space-y-2 text-gray-600">
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>MVP启动策略</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>渠道规划与执行时间轴</span>
+                        </li>
+                        <li class="flex items-start">
+                            <i class="fa fa-angle-right text-primary mt-1 mr-2"></i>
+                            <span>总结与展望</span>
+                        </li>
+                    </ul>
                 </div>
             </div>
-        </section>
-        <!-- 市场现状与用户痛点分析 -->
-        <section id="market" class="py-16 bg-gray-50">
-            <div class="container mx-auto px-4">
-                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">市场现状与用户痛点分析</h2>
-                <!-- 万亿宠物经济市场 -->
-                <div class="bg-white rounded-xl shadow-md p-8 mb-12">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">万亿宠物经济市场</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                        <div class="bg-primary/5 p-6 rounded-lg border border-primary/20 text-center">
-                            <p class="text-gray-600 mb-2">2024年市场规模</p>
-                            <p class="text-3xl font-bold text-primary">3002亿元</p></div>
-                        <div class="bg-secondary/5 p-6 rounded-lg border border-secondary/20 text-center">
-                            <p class="text-gray-600 mb-2">同比增长率</p>
-                            <p class="text-3xl font-bold text-secondary">7.5%</p></div>
-                        <div class="bg-accent/5 p-6 rounded-lg border border-accent/20 text-center">
-                            <p class="text-gray-600 mb-2">2025年预计规模</p>
-                            <p class="text-3xl font-bold text-accent">3500亿元+</p></div>
-                        <div class="bg-neutral/5 p-6 rounded-lg border border-neutral/20 text-center">
-                            <p class="text-gray-600 mb-2">2028年预计规模</p>
-                            <p class="text-3xl font-bold text-neutral">1.15万亿元</p></div>
+        </div>
+    </section>
+
+    <!-- 市场现状与用户痛点分析 -->
+    <section id="market" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">市场现状与用户痛点分析</h2>
+            
+            <!-- 万亿宠物经济市场 -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-12">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">万亿宠物经济市场</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div class="bg-primary/5 p-6 rounded-lg border border-primary/20 text-center">
+                        <p class="text-gray-600 mb-2">2024年市场规模</p>
+                        <p class="text-3xl font-bold text-primary">3002亿元</p>
                     </div>
-                </div>
-                <!-- 核心用户痛点 -->
-                <div class="bg-white rounded-xl shadow-md p-8 mb-12">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">核心用户痛点</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="bg-red-50 p-6 rounded-lg border border-red-100">
-                            <h4 class="text-xl font-semibold text-red-800 mb-4 text-center">信任缺失</h4>
-                            <p class="text-red-700 text-center">产品质量没有保障，缺乏权威认证，用户担心伤害宠物</p></div>
-                        <div class="bg-yellow-50 p-6 rounded-lg border border-yellow-100">
-                            <h4 class="text-xl font-semibold text-yellow-800 mb-4 text-center">选择困难</h4>
-                            <p class="text-yellow-700 text-center">不知道如何选择合适的产品，分不清产品是否有用</p></div>
-                        <div class="bg-orange-50 p-6 rounded-lg border border-orange-100">
-                            <h4 class="text-xl font-semibold text-orange-800 mb-4 text-center">价格混乱</h4>
-                            <p class="text-orange-700 text-center">同类产品价格差异大，难以判断产品真正价值</p></div>
+                    <div class="bg-secondary/5 p-6 rounded-lg border border-secondary/20 text-center">
+                        <p class="text-gray-600 mb-2">同比增长率</p>
+                        <p class="text-3xl font-bold text-secondary">7.5%</p>
                     </div>
-                </div>
-                <!-- 信任危机深度剖析 -->
-                <div class="bg-white rounded-xl shadow-md p-8">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fa fa-warning text-accent mr-3"></i>信任危机：行业缺乏标杆，用户决策成本高</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">现状分析</h4>
-                            <p class="text-gray-600 mb-4">目前宠物用品市场鱼龙混杂，缺乏像母婴行业一样的强制高标准和龙头标杆企业。市场上产品质量参差不齐，用户难以辨别优劣。</p>
-                            <div class="bg-gray-50 p-4 rounded-lg">
-                                <p class="text-gray-700 italic">"宠物用品行业还处于野蛮生长阶段，没有形成统一的行业标准和规范，用户只能靠自己的经验去判断产品好坏。"</p></div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">用户心理（痛点1 - 不信任）</h4>
-                            <p class="text-gray-600 mb-4">用户面对琳琅满目的产品极度迷茫，核心担忧是："这东西到底有没有用？会不会害了我的毛孩子？"</p>
-                            <div class="bg-red-50 p-4 rounded-lg border border-red-100">
-                                <h5 class="font-semibold text-red-800 mb-2">用户核心顾虑</h5>
-                                <ul class="text-red-700 space-y-1">
-                                    <li>• 产品质量是否安全可靠</li>
-                                    <li>• 产品是否真的有效</li>
-                                    <li>• 是否含有有害物质</li>
-                                    <li>• 会不会对宠物造成伤害</li></ul>
-                            </div>
-                        </div>
+                    <div class="bg-accent/5 p-6 rounded-lg border border-accent/20 text-center">
+                        <p class="text-gray-600 mb-2">2025年预计规模</p>
+                        <p class="text-3xl font-bold text-accent">3500亿元+</p>
                     </div>
-                    <div class="mt-8 bg-primary/5 p-6 rounded-lg border border-primary/20">
-                        <h4 class="text-xl font-semibold text-primary mb-3">选品机会</h4>
-                        <p class="text-gray-700 text-lg">谁能率先建立"信任状"，谁就能收割市场红利。在混乱的市场中提供确定性，成为用户首选的放心品牌。</p></div>
-                </div>
-            </div>
-        </section>
-        <!-- 选品策略总览 -->
-        <section id="strategy" class="py-16 bg-white">
-            <div class="container mx-auto px-4">
-                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">核心选品策略——解决痛点即商机</h2>
-                <!-- 选品逻辑 -->
-                <div class="bg-gray-50 rounded-xl shadow-sm p-8 mb-12">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">基于用户痛点的选品逻辑</h3>
-                    <p class="text-gray-600 text-center text-lg mb-8">我们的选品策略将围绕用户痛点展开，确保每一款产品都能解决实际问题，同时保证产品质量和利润空间。</p>
-                    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                        <div class="text-center">
-                            <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fa fa-heart text-primary text-2xl"></i>
-                            </div>
-                            <h4 class="font-semibold text-gray-800 mb-2">解决用户核心痛点</h4>
-                            <p class="text-gray-600 text-sm">每款产品都必须能够解决用户的实际问题</p></div>
-                        <div class="text-center">
-                            <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fa fa-shield text-secondary text-2xl"></i>
-                            </div>
-                            <h4 class="font-semibold text-gray-800 mb-2">保证产品质量和安全</h4>
-                            <p class="text-gray-600 text-sm">建立严格的质量控制体系</p></div>
-                        <div class="text-center">
-                            <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fa fa-dollar text-accent text-2xl"></i>
-                            </div>
-                            <h4 class="font-semibold text-gray-800 mb-2">具有合理的利润空间</h4>
-                            <p class="text-gray-600 text-sm">确保企业能够持续发展</p></div>
-                        <div class="text-center">
-                            <div class="w-16 h-16 bg-neutral/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                                <i class="fa fa-star text-neutral text-2xl"></i>
-                            </div>
-                            <h4 class="font-semibold text-gray-800 mb-2">差异化竞争优势</h4>
-                            <p class="text-gray-600 text-sm">避免陷入价格战的恶性循环</p></div>
-                    </div>
-                </div>
-                <!-- 针对"用户迷茫"的选品 -->
-                <div class="bg-white rounded-xl shadow-md p-8 mb-12 border border-gray-100">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fa fa-lightbulb-o text-yellow-500 mr-3"></i>针对"用户迷茫"的选品：不做伪需求，只做解忧药</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">痛点剖析</h4>
-                            <p class="text-gray-600 mb-4">用户不知道"鱼油、卵磷脂、微量元素"是不是智商税，也不知道家里到底需不需要那么多杀菌喷雾。面对琳琅满目的产品，用户陷入选择困难，最终可能放弃购买。</p>
-                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
-                                <h5 class="font-semibold text-yellow-800 mb-2">用户典型困惑</h5>
-                                <ul class="text-yellow-700 space-y-1">
-                                    <li>• "鱼油真的有用吗？会不会是智商税？"</li>
-                                    <li>• "卵磷脂和鱼油有什么区别？都需要买吗？"</li>
-                                    <li>• "家里已经有驱虫药了，还需要杀菌喷雾吗？"</li>
-                                    <li>• "微量元素补充剂是不是必须的？"</li></ul>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">选品方案（组合拳）</h4>
-                            <div class="space-y-4">
-                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                    <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
-                                        <i class="fa fa-arrow-right text-blue-500 mr-2"></i>基础必需款（引流）</h5>
-                                    <p class="text-blue-700">选取最高频、无争议的刚需品（如：除臭杀菌的基础消毒喷雾、基础驱虫套装）。用低客单价、高需求的产品吸引用户，建立初步信任。</p></div>
-                                <div class="bg-green-50 p-4 rounded-lg border border-green-100">
-                                    <h5 class="font-semibold text-green-800 mb-2 flex items-center">
-                                        <i class="fa fa-arrow-right text-green-500 mr-2"></i>教育型产品（高利润）</h5>
-                                    <p class="text-green-700">针对"营养补充剂"的迷茫，推出 "懒人营养套餐包" （如：每日一包=鱼油+卵磷脂+益生菌）。用组合装降低用户的选择恐惧症，利用这种"懒人经济"提高客单价和利润。</p></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 针对"缺乏保障"的选品 -->
-                <div class="bg-white rounded-xl shadow-md p-8 mb-12 border border-gray-100">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fa fa-shield text-red-500 mr-3"></i>针对"缺乏保障"的选品：用硬认证解决信任危机</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">痛点剖析</h4>
-                            <p class="text-gray-600 mb-4">用户担心产品质量差、有毒、伤宠。由于市场上产品质量参差不齐，用户很难判断产品是否安全，这成为用户购买的最大障碍。</p>
-                            <div class="bg-red-50 p-4 rounded-lg border border-red-100">
-                                <h5 class="font-semibold text-red-800 mb-2">用户核心担忧</h5>
-                                <ul class="text-red-700 space-y-1">
-                                    <li>• "这个产品会不会含有有害物质？"</li>
-                                    <li>• "材料是否安全，宠物咬了会不会中毒？"</li>
-                                    <li>• "产品质量有没有保障？"</li>
-                                    <li>• "如果产品有问题，怎么办？"</li></ul>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">选品方案</h4>
-                            <div class="space-y-4">
-                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                    <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
-                                        <i class="fa fa-check-circle text-blue-500 mr-2"></i>引入"安全认证"作为选品第一门槛</h5>
-                                    <p class="text-blue-700">所有选品必须优先考虑通过或可申请第三方权威检测的产品（如SGS检测报告，涵盖重金属、有害物质、咬噬测试等）。</p></div>
-                                <div class="bg-green-50 p-4 rounded-lg border border-green-100">
-                                    <h5 class="font-semibold text-green-800 mb-2 flex items-center">
-                                        <i class="fa fa-bullhorn text-green-500 mr-2"></i>选品卖点话术</h5>
-                                    <p class="text-green-700">将"人用级别"、"食品级材质"、"通过XX认证"作为核心卖点直接打在包装和详情页上，让用户一眼就能看到安全保障。</p></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-8 flex justify-center">
-                        <img src="https://aka.doubaocdn.com/s/DEe01vyx4o" alt="SGS认证标志" class="h-24 mx-4">
-                        <img src="https://aka.doubaocdn.com/s/dr841vyx4o" alt="权威认证标志" class="h-24 mx-4"></div>
-                    <p class="text-center text-gray-600 mt-4">所有产品均通过SGS等权威第三方机构检测认证</p></div>
-                <!-- 针对"价格敏感"与"推流成本"的选品 -->
-                <div class="bg-white rounded-xl shadow-md p-8 mb-12 border border-gray-100">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fa fa-balance-scale text-primary mr-3"></i>针对"价格敏感"与"推流成本"的选品：打造"低毛利引流+高利润收割"矩阵</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">痛点剖析</h4>
-                            <p class="text-gray-600 mb-4">猫砂、粮这类产品虽然好卖，但价格太透明，利润像纸一样薄（最低仅1%），只能引流不挣钱。同时，推流成本越来越高，单一产品难以覆盖营销成本。</p>
-                            <div class="bg-red-50 p-4 rounded-lg border border-red-100">
-                                <h5 class="font-semibold text-red-800 mb-2">传统选品的问题</h5>
-                                <ul class="text-red-700 space-y-1">
-                                    <li>• 刚需品利润太低，难以盈利</li>
-                                    <li>• 推流成本上升，利润下降</li>
-                                    <li>• 用户只买低价产品，复购率低</li>
-                                    <li>• 缺乏产品组合，难以提升客单价</li></ul>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">选品方案（组合拳）</h4>
-                            <div class="space-y-4">
-                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                    <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
-                                        <i class="fa fa-arrow-down text-blue-500 mr-2"></i>引流款（低利润/负利润）</h5>
-                                    <p class="text-blue-700">选择大包装/重物（如大规格猫砂、大袋狗粮）。利用其高复购率引流，但通过优化包装（如将小包装改为大包装降低包材成本）和优化物流（如利用送货上门服务解决重物搬运痛点）来挽回一点毛利，核心目的是拉新客。</p></div>
-                                <div class="bg-green-50 p-4 rounded-lg border border-green-100">
-                                    <h5 class="font-semibold text-green-800 mb-2 flex items-center">
-                                        <i class="fa fa-arrow-up text-green-500 mr-2"></i>利润款（高毛利）</h5>
-                                    <p class="text-green-700">选择周边消耗品/情绪产品（如宠物生日蛋糕、节日服饰、高端零食），利用引流款带来的流量进行交叉销售，提升整体利润。</p></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-8">
-                        <h4 class="text-xl font-semibold text-gray-800 mb-4">不同品类毛利率对比</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                            <div class="h-64" id="profitChart"></div>
-                            <div class="space-y-4">
-                                <div class="bg-gray-50 p-4 rounded-lg">
-                                    <h5 class="font-semibold text-gray-800 mb-2">毛利率分析</h5>
-                                    <ul class="space-y-2 text-gray-600">
-                                        <li class="flex justify-between">
-                                            <span>智能宠物设备</span>
-                                            <span class="font-bold text-primary">70%+</span></li>
-                                        <li class="flex justify-between">
-                                            <span>高端营养补充品</span>
-                                            <span class="font-bold text-secondary">50%+</span></li>
-                                        <li class="flex justify-between">
-                                            <span>专业护理产品</span>
-                                            <span class="font-bold text-accent">40%+</span></li>
-                                        <li class="flex justify-between">
-                                            <span>宠物玩具</span>
-                                            <span class="font-bold text-neutral">23.4%</span></li>
-                                        <li class="flex justify-between">
-                                            <span>宠物窝垫</span>
-                                            <span class="font-bold text-neutral">21.5%</span></li>
-                                        <li class="flex justify-between">
-                                            <span>宠物食品</span>
-                                            <span class="font-bold text-red-500">9.6%</span></li>
-                                    </ul>
-                                </div>
-                                <div class="bg-primary/5 p-4 rounded-lg border border-primary/20">
-                                    <h5 class="font-semibold text-primary mb-2">选品建议</h5>
-                                    <p class="text-gray-700">重点发展智能设备和高端营养补充品等高利润产品，同时搭配适量的引流产品，形成完整的产品矩阵，实现利润最大化。</p></div>
-                            </div>
-                        </div>
+                    <div class="bg-neutral/5 p-6 rounded-lg border border-neutral/20 text-center">
+                        <p class="text-gray-600 mb-2">2028年预计规模</p>
+                        <p class="text-3xl font-bold text-neutral">1.15万亿元</p>
                     </div>
                 </div>
             </div>
-        </section>
-        <!-- 差异化打法 -->
-        <section id="business" class="py-16 bg-gray-50">
-            <div class="container mx-auto px-4">
-                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">差异化打法——树立标杆与科技赋能</h2>
-                <!-- 引流黑马：定制化的宠物配餐计划 -->
-                <div class="bg-white rounded-xl shadow-md p-8 mb-12">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fa fa-cutlery text-orange-500 mr-3"></i>引流黑马：定制化的"宠物配餐计划"</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">痛点解决</h4>
-                            <p class="text-gray-600 mb-4">用户不知道每天喂多少、怎么喂。面对各种宠物食品，用户很难判断哪种最适合自己的宠物，也不知道如何搭配营养。</p>
-                            <div class="bg-orange-50 p-4 rounded-lg border border-orange-100">
-                                <h5 class="font-semibold text-orange-800 mb-2">用户典型困惑</h5>
-                                <ul class="text-orange-700 space-y-1">
-                                    <li>• "每天应该喂多少粮才合适？"</li>
-                                    <li>• "不同年龄段的宠物应该怎么搭配营养？"</li>
-                                    <li>• "零食和营养品应该怎么喂？"</li>
-                                    <li>• "我家宠物偏胖，应该怎么调整饮食？"</li></ul>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">引流策略</h4>
-                            <div class="space-y-4">
-                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                    <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
-                                        <i class="fa fa-money text-blue-500 mr-2"></i>低资金段</h5>
-                                    <p class="text-blue-700">制作电子版《XX品种宠物每日配餐指南》，通过私域/社群免费发放，附带简单的小包装试吃装链接，吸引用户关注。</p></div>
-                                <div class="bg-green-50 p-4 rounded-lg border border-green-100">
-                                    <h5 class="font-semibold text-green-800 mb-2 flex items-center">
-                                        <i class="fa fa-calendar text-green-500 mr-2"></i>高资金段</h5>
-                                    <p class="text-green-700">推出"按月订购"的定制化配餐盲盒。根据宠物体重、年龄，每月寄送搭配好的主粮、零食、营养品小包，锁定长期复购。</p></div>
-                            </div>
-                        </div>
+
+            <!-- 核心用户痛点 -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-12">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">核心用户痛点</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-red-50 p-6 rounded-lg border border-red-100">
+                        <h4 class="text-xl font-semibold text-red-800 mb-4 text-center">信任缺失</h4>
+                        <p class="text-red-700 text-center">产品质量没有保障，缺乏权威认证，用户担心伤害宠物</p>
                     </div>
-                </div>
-                <!-- 建立壁垒：试水智能硬件 -->
-                <div class="bg-white rounded-xl shadow-md p-8 mb-12">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fa fa-microchip text-purple-500 mr-3"></i>建立壁垒：试水智能硬件（如宠物智能健康项圈）</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">趋势洞察</h4>
-                            <p class="text-gray-600 mb-4">AI+宠物是未来，但目前市场产品两极分化严重（功能鸡肋 vs 价格虚高），用户想买但怕被骗。大多数智能产品要么功能华而不实，要么价格过高，让用户望而却步。</p>
-                            <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
-                                <h5 class="font-semibold text-purple-800 mb-2">市场现状</h5>
-                                <ul class="text-purple-700 space-y-1">
-                                    <li>• 功能鸡肋：很多智能产品功能华而不实，实用性不强</li>
-                                    <li>• 价格虚高：高端产品价格动辄上千元，超出用户承受范围</li>
-                                    <li>• 数据不准确：很多产品的数据监测不准确，参考价值低</li>
-                                    <li>• 用户体验差：App界面复杂，数据展示不直观</li></ul>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">选品切入点</h4>
-                            <div class="space-y-4">
-                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                    <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
-                                        <i class="fa fa-heartbeat text-blue-500 mr-2"></i>核心功能</h5>
-                                    <p class="text-blue-700">选取能解决真实焦虑的功能——监测睡眠、步态分析（预警关节问题）、心率血压（预警心脏问题）。专注于解决用户真正关心的健康问题。</p></div>
-                                <div class="bg-green-50 p-4 rounded-lg border border-green-100">
-                                    <h5 class="font-semibold text-green-800 mb-2 flex items-center">
-                                        <i class="fa fa-exclamation-circle text-green-500 mr-2"></i>避坑指南</h5>
-                                    <p class="text-green-700">坚决不做噱头功能（如情绪识别）。重点强调数据的准确率和医疗级参考价值，并与App生成的可视化健康报告结合，让用户"看得懂、能转发"。</p></div>
-                            </div>
-                        </div>
+                    <div class="bg-yellow-50 p-6 rounded-lg border border-yellow-100">
+                        <h4 class="text-xl font-semibold text-yellow-800 mb-4 text-center">选择困难</h4>
+                        <p class="text-yellow-700 text-center">不知道如何选择合适的产品，分不清产品是否有用</p>
                     </div>
-                    <div class="mt-8 flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8">
-                        <img src="https://aka.doubaocdn.com/s/FXXY1vyx53" alt="智能健康项圈" class="h-48 rounded-lg shadow-md">
-                        <div class="text-center md:text-left">
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">智能健康项圈功能</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
-                                <div class="flex items-center">
-                                    <i class="fa fa-heart text-red-500 mr-2"></i>
-                                    <span>实时监测心率、血压</span></div>
-                                <div class="flex items-center">
-                                    <i class="fa fa-moon-o text-blue-500 mr-2"></i>
-                                    <span>分析睡眠质量和规律</span></div>
-                                <div class="flex items-center">
-                                    <i class="fa fa-paw text-green-500 mr-2"></i>
-                                    <span>监测步态，预警关节问题</span></div>
-                                <div class="flex items-center">
-                                    <i class="fa fa-mobile text-purple-500 mr-2"></i>
-                                    <span>App生成健康报告</span></div>
-                            </div>
-                            <div class="mt-4 p-4 bg-primary/5 rounded-lg">
-                                <p class="text-primary font-semibold">市场前景广阔，预计年增长率超过30%，毛利率可达70%+</p></div>
-                        </div>
-                    </div>
-                    <div class="mt-8 bg-gray-50 p-6 rounded-lg">
-                        <h4 class="text-xl font-semibold text-gray-800 mb-4">宠物科技用品未来期待</h4>
-                        <img src="https://aka.doubaocdn.com/s/RfQY1w7Ia8" alt="宠物科技用品未来期待" class="w-full rounded-lg shadow-md">
-                        <p class="text-center text-gray-600 mt-4">用户对宠物科技用品的期待，设备自动适配需求（48.4%）和宠物行为习惯分析（42.8%）最受关注</p></div>
-                </div>
-                <!-- 标杆学习：参考"网易严选"模式 -->
-                <div class="bg-white rounded-xl shadow-md p-8">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fa fa-star text-yellow-500 mr-3"></i>标杆学习：参考"网易严选"模式</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">选品逻辑</h4>
-                            <p class="text-gray-600 mb-4">仿照"网易严选"的ODM模式，深入供应链上游，剔除品牌溢价。通过直接与工厂合作，减少中间环节，为用户提供高性价比的产品。</p>
-                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
-                                <h5 class="font-semibold text-yellow-800 mb-2">ODM模式优势</h5>
-                                <ul class="text-yellow-700 space-y-1">
-                                    <li>• 剔除品牌溢价，降低产品成本</li>
-                                    <li>• 直接控制产品质量，确保品质</li>
-                                    <li>• 可以定制化开发产品，满足用户需求</li>
-                                    <li>• 建立供应链壁垒，提高竞争门槛</li></ul>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">具体做法</h4>
-                            <p class="text-gray-600 mb-4">寻找一线大牌（如Pidan等）的同源代工厂，主打"工厂直供"、"大牌品质，一半价格"。利用大牌的工艺标准（确定性），卖自己的价格（性价比），快速建立用户对"品质"的信任。</p>
-                            <div class="space-y-4">
-                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                    <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
-                                        <i class="fa fa-industry text-blue-500 mr-2"></i>工厂合作</h5>
-                                    <p class="text-blue-700">与一线品牌的代工厂直接合作，确保产品品质与大牌一致</p></div>
-                                <div class="bg-green-50 p-4 rounded-lg border border-green-100">
-                                    <h5 class="font-semibold text-green-800 mb-2 flex items-center">
-                                        <i class="fa fa-tag text-green-500 mr-2"></i>定价策略</h5>
-                                    <p class="text-green-700">以大牌一半的价格销售，突出性价比优势</p></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-8 flex justify-center">
-                        <img src="https://aka.doubaocdn.com/s/83Oj1vyx58" alt="网易严选平台" class="h-32 rounded-lg shadow-md"></div>
-                    <p class="text-center text-gray-600 mt-4">参考网易严选模式，打造高性价比的宠物用品品牌</p></div>
-            </div>
-        </section>
-        <!-- 引流策略规划 -->
-        <section id="business" class="py-16 bg-gray-50">
-            <div class="container mx-auto px-4">
-                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">引流策略规划——精准获客与高效转化</h2>
-                <!-- 不同资金段的引流方案（修改核心部分） -->
-                <div class="bg-white rounded-xl p-8 mb-12 shadow-md border border-gray-100">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                        <i class="fa fa-line-chart text-blue-500 mr-3"></i>不同资金段的引流方案</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <!-- 低预算 -->
-                        <div class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-100">
-                            <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4 mx-auto">
-                                <i class="fa fa-money text-amber-500 text-2xl"></i>
-                            </div>
-                            <h4 class="text-xl font-bold text-gray-800 mb-4 text-center">低预算（1-5万）</h4>
-                            <h5 class="font-bold text-blue-600 mb-3">核心策略：内容种草+私域引流</h5>
-                            <ul class="space-y-3 text-gray-600">
-                                <li class="flex items-start">
-                                    <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
-                                    <span>小红书/抖音免费内容：养宠知识、产品测评</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
-                                    <span>宠物社群运营：免费配餐指南分享</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
-                                    <span>宠物论坛/问答平台：专业问题解答</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
-                                    <span>宠物医院合作：优惠券发放</span></li>
-                            </ul>
-                            <div class="mt-4 p-3 bg-amber-50 rounded-lg">
-                                <p class="text-sm text-gray-700">
-                                    <span class="font-bold text-amber-600">预期效果：</span>月获客500-1000人，转化率10-15%</p></div>
-                        </div>
-                        <!-- 中预算 -->
-                        <div class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-100">
-                            <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4 mx-auto">
-                                <i class="fa fa-credit-card text-emerald-500 text-2xl"></i>
-                            </div>
-                            <h4 class="text-xl font-bold text-gray-800 mb-4 text-center">中预算（5-20万）</h4>
-                            <h5 class="font-bold text-blue-600 mb-3">核心策略：付费推广+达人合作</h5>
-                            <ul class="space-y-3 text-gray-600">
-                                <li class="flex items-start">
-                                    <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
-                                    <span>宠物达人合作：中腰部博主产品推荐</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
-                                    <span>抖音/小红书信息流广告：精准定向投放</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
-                                    <span>宠物配餐计划小程序：免费试用推广</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
-                                    <span>宠物展会参展：品牌曝光与获客</span></li>
-                            </ul>
-                            <div class="mt-4 p-3 bg-emerald-50 rounded-lg">
-                                <p class="text-sm text-gray-700">
-                                    <span class="font-bold text-emerald-600">预期效果：</span>月获客2000-5000人，转化率15-20%</p></div>
-                        </div>
-                        <!-- 高预算 -->
-                        <div class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-100">
-                            <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
-                                <i class="fa fa-trophy text-blue-500 text-2xl"></i>
-                            </div>
-                            <h4 class="text-xl font-bold text-gray-800 mb-4 text-center">高预算（20万以上）</h4>
-                            <h5 class="font-bold text-blue-600 mb-3">核心策略：品牌建设+全渠道营销</h5>
-                            <ul class="space-y-3 text-gray-600">
-                                <li class="flex items-start">
-                                    <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
-                                    <span>头部宠物博主代言：品牌形象塑造</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
-                                    <span>多平台广告投放：抖音、小红书、B站</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
-                                    <span>宠物配餐计划小程序：付费推广</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
-                                    <span>线下宠物体验馆：品牌体验与转化</span></li>
-                            </ul>
-                            <div class="mt-4 p-3 bg-blue-50 rounded-lg">
-                                <p class="text-sm text-gray-700">
-                                    <span class="font-bold text-blue-600">预期效果：</span>月获客10000+人，转化率20-30%</p></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 宠物配餐计划小程序 -->
-                <div class="bg-white rounded-xl shadow-lg p-8 mb-12">
-                    <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
-                        <i class="fa fa-calculator text-blue-500 mr-3"></i>宠物配餐计划小程序——核心引流工具</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xl font-bold text-gray-800 mb-4">功能核心价值</h4>
-                            <div class="space-y-4">
-                                <div class="bg-gray-100 rounded-lg p-4">
-                                    <h5 class="font-bold text-blue-600 mb-2">
-                                        <i class="fa fa-calculator mr-2"></i>智能配餐计算</h5>
-                                    <p class="text-gray-600">根据宠物品种、年龄、体重、活动量，自动计算每日所需营养和喂食量</p></div>
-                                <div class="bg-gray-100 rounded-lg p-4">
-                                    <h5 class="font-bold text-blue-600 mb-2">
-                                        <i class="fa fa-book mr-2"></i>个性化饮食方案</h5>
-                                    <p class="text-gray-600">提供针对性的饮食建议，包括主粮、零食、营养品的搭配方案</p></div>
-                                <div class="bg-gray-100 rounded-lg p-4">
-                                    <h5 class="font-bold text-blue-600 mb-2">
-                                        <i class="fa fa-bell mr-2"></i>定时喂食提醒</h5>
-                                    <p class="text-gray-600">设置宠物喂食时间，定时提醒用户，养成良好的喂食习惯</p></div>
-                                <div class="bg-gray-100 rounded-lg p-4">
-                                    <h5 class="font-bold text-blue-600 mb-2">
-                                        <i class="fa fa-shopping-cart mr-2"></i>一键购买功能</h5>
-                                    <p class="text-gray-600">根据配餐方案，直接推荐并购买对应的产品，简化用户购买流程</p></div>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-bold text-gray-800 mb-4">用户转化流程设计</h4>
-                            <div class="relative">
-                                <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-blue-200"></div>
-                                <div class="space-y-8 pl-12">
-                                    <div class="relative">
-                                        <div class="absolute -left-12 top-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                                            <span class="text-white text-sm font-bold">1</span></div>
-                                        <h5 class="font-bold text-gray-800 mb-2">免费使用小程序</h5>
-                                        <p class="text-gray-600">用户通过扫码或链接进入小程序，免费使用智能配餐功能</p></div>
-                                    <div class="relative">
-                                        <div class="absolute -left-12 top-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                                            <span class="text-white text-sm font-bold">2</span></div>
-                                        <h5 class="font-bold text-gray-800 mb-2">获取个性化配餐方案</h5>
-                                        <p class="text-gray-600">用户输入宠物信息，获取专业的配餐建议和营养分析</p></div>
-                                    <div class="relative">
-                                        <div class="absolute -left-12 top-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                                            <span class="text-white text-sm font-bold">3</span></div>
-                                        <h5 class="font-bold text-gray-800 mb-2">查看推荐产品</h5>
-                                        <p class="text-gray-600">小程序根据配餐方案，推荐对应的主粮、零食和营养品</p></div>
-                                    <div class="relative">
-                                        <div class="absolute -left-12 top-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                                            <span class="text-white text-sm font-bold">4</span></div>
-                                        <h5 class="font-bold text-gray-800 mb-2">完成购买转化</h5>
-                                        <p class="text-gray-600">用户通过一键购买功能，直接购买推荐产品，完成转化</p></div>
-                                    <div class="relative">
-                                        <div class="absolute -left-12 top-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                                            <span class="text-white text-sm font-bold">5</span></div>
-                                        <h5 class="font-bold text-gray-800 mb-2">复购与留存</h5>
-                                        <p class="text-gray-600">通过定时提醒、个性化推荐等功能，促进用户复购和长期留存</p></div>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="bg-orange-50 p-6 rounded-lg border border-orange-100">
+                        <h4 class="text-xl font-semibold text-orange-800 mb-4 text-center">价格混乱</h4>
+                        <p class="text-orange-700 text-center">同类产品价格差异大，难以判断产品真正价值</p>
                     </div>
                 </div>
             </div>
-        </section>
-        <!-- 行业TOP10特点和打法分析 -->
-        <section id="top10" class="py-16 bg-white">
-            <div class="container mx-auto px-4">
-                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">行业TOP10特点和打法分析</h2>
-                <!-- TOP10品牌排行 -->
-                <div class="bg-gray-50 rounded-xl shadow-sm p-8 mb-12">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">2024-2025年宠物行业TOP10品牌排行</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">2024年H1排行</h4>
-                            <img src="https://aka.doubaocdn.com/s/FGew1w7Ia8" alt="2024年H1宠物行业TOP10品牌排行" class="w-full rounded-lg">
-                            <p class="text-center text-gray-600 mt-4">国产品牌销售额占比：55.0%</p></div>
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">2025年H1排行</h4>
-                            <img src="https://aka.doubaocdn.com/s/FGew1w7Ia8" alt="2025年H1宠物行业TOP10品牌排行" class="w-full rounded-lg">
-                            <p class="text-center text-gray-600 mt-4">国产品牌销售额占比：67.2%</p></div>
-                    </div>
-                    <div class="mt-8 bg-primary/5 p-6 rounded-lg border border-primary/20">
-                        <h4 class="text-xl font-semibold text-primary mb-3">关键洞察</h4>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h5 class="font-semibold text-gray-800 mb-2">国产品牌崛起</h5>
-                                <p class="text-gray-600 text-sm">国产品牌销售额占比从55.0%提升到67.2%，市场份额显著增长</p></div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h5 class="font-semibold text-gray-800 mb-2">头部品牌稳定</h5>
-                                <p class="text-gray-600 text-sm">皇家和麦富迪稳居前两名，品牌忠诚度较高</p></div>
-                            <div class="bg-white p-4 rounded-lg shadow-sm">
-                                <h5 class="font-semibold text-gray-800 mb-2">新品牌涌现</h5>
-                                <p class="text-gray-600 text-sm">诚实一口、弗列加特等新品牌进入TOP10</p></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 麦富迪案例深度拆解 -->
-                <div class="bg-white rounded-xl shadow-md p-8 mb-12 border border-gray-100">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fa fa-bullseye text-accent mr-3"></i>麦富迪案例深度拆解：国产品牌头部打法</h3>
-                    <!-- 自营矩阵分析 -->
-                    <div class="mb-8">
-                        <h4 class="text-xl font-semibold text-gray-800 mb-4">自营矩阵：猫狗产品阵地垂直化推广</h4>
-                        <img src="https://aka.doubaocdn.com/s/YbXb1w7Ia8" alt="麦富迪自营矩阵" class="w-full rounded-lg shadow-md mb-4">
-                        <p class="text-gray-600 mb-4">近一年来，麦富迪因其自身全面细致的产品线，在推广内容上也以猫/狗为核心角色垂直运营，将产品介绍融入猫狗日常做软广，而开宗明义的叫卖式营销则为直播引流服务。</p>
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                <h5 class="font-semibold text-blue-800 mb-2">猫咪产品自营矩阵</h5>
-                                <ul class="text-blue-700 space-y-1">
-                                    <li>• 麦富迪爱宠专卖店</li>
-                                    <li>• 麦富迪宠沃宠物专卖店</li>
-                                    <li>• 麦富迪猫咪严选</li>
-                                    <li>• 麦富迪凯激特专卖店</li></ul>
-                            </div>
-                            <div class="bg-green-50 p-4 rounded-lg border border-green-100">
-                                <h5 class="font-semibold text-green-800 mb-2">狗狗产品自营矩阵</h5>
-                                <ul class="text-green-700 space-y-1">
-                                    <li>• 麦富迪喵犬专卖店</li>
-                                    <li>• 麦富迪宠物用品直播店</li></ul>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 直播内容分析 -->
-                    <div class="mb-8">
-                        <h4 class="text-xl font-semibold text-gray-800 mb-4">直播内容：自播账号带货能力高，集中推爆款</h4>
-                        <img src="https://aka.doubaocdn.com/s/4Knt1w7Ia8" alt="麦富迪直播内容" class="w-full rounded-lg shadow-md mb-4">
-                        <p class="text-gray-600 mb-4">麦富迪自播达人从商品上来看，集中主推爆款冻干三文鱼猫粮及营养森林系列肉松狗粮，根据账号带货能力以产品适用类型/包装以及售价分别引流。</p>
-                        <div class="bg-gray-50 p-4 rounded-lg">
-                            <h5 class="font-semibold text-gray-800 mb-2">直播策略特点</h5>
-                            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                                <div class="text-center">
-                                    <i class="fa fa-video-camera text-primary text-2xl mb-2"></i>
-                                    <h6 class="font-semibold text-gray-800">深入车间</h6>
-                                    <p class="text-gray-600 text-sm">展示生产过程，增强产品可信度</p></div>
-                                <div class="text-center">
-                                    <i class="fa fa-users text-secondary text-2xl mb-2"></i>
-                                    <h6 class="font-semibold text-gray-800">产品介绍+社群引导</h6>
-                                    <p class="text-gray-600 text-sm">专业讲解产品特点，引导用户加入社群</p></div>
-                                <div class="text-center">
-                                    <i class="fa fa-tags text-accent text-2xl mb-2"></i>
-                                    <h6 class="font-semibold text-gray-800">品牌&产品介绍</h6>
-                                    <p class="text-gray-600 text-sm">强化品牌认知，突出产品优势</p></div>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- 泛娱乐营销分析 -->
+
+
+            <!-- 信任危机深度剖析 -->
+            <div class="bg-white rounded-xl shadow-md p-8">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fa fa-warning text-accent mr-3"></i>
+                    信任危机：行业缺乏标杆，用户决策成本高
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div>
-                        <h4 class="text-xl font-semibold text-gray-800 mb-4">泛娱乐营销：明星矩阵细致运营促进转化</h4>
-                        <img src="https://aka.doubaocdn.com/s/Yznc1w7Ia8" alt="麦富迪泛娱乐营销" class="w-full rounded-lg shadow-md mb-4">
-                        <p class="text-gray-600 mb-4">麦富迪开创了宠物行业泛娱乐营销的先河，从戏剧影视到明星综艺，电视剧《老男孩》、慢综艺《向往的生活》、萌宠竞技《战斗吧萌犬》等相关媒体内容的渗入，试图将潮流、活力及年轻化的多元价值与Z世代年轻人的个性彰显链接。</p>
-                        <div class="bg-purple-50 p-6 rounded-lg border border-purple-100">
-                            <h5 class="font-semibold text-purple-800 mb-4">明星矩阵功能分析</h5>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <h6 class="font-semibold text-purple-700 mb-2">品牌代言人 - 谢霆锋</h6>
-                                    <p class="text-purple-600">IP联名——匠造宠食新锋味，代表创新、高品质及高标准的生活方式和精神价值</p></div>
-                                <div>
-                                    <h6 class="font-semibold text-purple-700 mb-2">品牌青春大使 - 尹浩宇</h6>
-                                    <p class="text-purple-600">全面推广，主要布局于电商推广，服务于引流和直播带货，着力于对年轻圈层的发力</p></div>
-                                <div>
-                                    <h6 class="font-semibold text-purple-700 mb-2">天性喂养大使 - 萧敬腾</h6>
-                                    <p class="text-purple-600">代表barf霸弗产品线，即符合生物天性的生骨肉喂养饮食，喂食生骨肉及健康食物</p></div>
-                                <div>
-                                    <h6 class="font-semibold text-purple-700 mb-2">推广大使 - 杨迪</h6>
-                                    <p class="text-purple-600">《麦富迪全民找杨迪》营销活动，在大型事件营销和冠名综艺中提升品牌知名度</p></div>
-                            </div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">现状分析</h4>
+                        <p class="text-gray-600 mb-4">目前宠物用品市场鱼龙混杂，缺乏像母婴行业一样的强制高标准和龙头标杆企业。市场上产品质量参差不齐，用户难以辨别优劣。</p>
+                        <div class="bg-gray-50 p-4 rounded-lg">
+                            <p class="text-gray-700 italic">"宠物用品行业还处于野蛮生长阶段，没有形成统一的行业标准和规范，用户只能靠自己的经验去判断产品好坏。"</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">用户心理（痛点1 - 不信任）</h4>
+                        <p class="text-gray-600 mb-4">用户面对琳琅满目的产品极度迷茫，核心担忧是："这东西到底有没有用？会不会害了我的毛孩子？"</p>
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                            <h5 class="font-semibold text-red-800 mb-2">用户核心顾虑</h5>
+                            <ul class="text-red-700 space-y-1">
+                                <li>• 产品质量是否安全可靠</li>
+                                <li>• 产品是否真的有效</li>
+                                <li>• 是否含有有害物质</li>
+                                <li>• 会不会对宠物造成伤害</li>
+                            </ul>
                         </div>
                     </div>
                 </div>
-                <!-- 头部品牌打法借鉴 -->
-                <div class="bg-gray-50 rounded-xl shadow-sm p-8">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">头部品牌打法借鉴</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <div class="text-center mb-4">
-                                <i class="fa fa-sitemap text-primary text-3xl"></i>
-                            </div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">矩阵化运营</h4>
-                            <ul class="text-gray-600 space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-primary mt-1 mr-2"></i>
-                                    <span>建立多品牌矩阵，覆盖不同细分市场</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-primary mt-1 mr-2"></i>
-                                    <span>垂直化运营，针对不同宠物类型建立专门渠道</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-primary mt-1 mr-2"></i>
-                                    <span>差异化定位，满足不同用户需求</span></li>
-                            </ul>
+                <div class="mt-8 bg-primary/5 p-6 rounded-lg border border-primary/20">
+                    <h4 class="text-xl font-semibold text-primary mb-3">选品机会</h4>
+                    <p class="text-gray-700 text-lg">谁能率先建立"信任状"，谁就能收割市场红利。在混乱的市场中提供确定性，成为用户首选的放心品牌。</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 选品策略总览 -->
+    <section id="strategy" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">核心选品策略——解决痛点即商机</h2>
+            
+            <!-- 选品逻辑 -->
+            <div class="bg-gray-50 rounded-xl shadow-sm p-8 mb-12">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">基于用户痛点的选品逻辑</h3>
+                <p class="text-gray-600 text-center text-lg mb-8">我们的选品策略将围绕用户痛点展开，确保每一款产品都能解决实际问题，同时保证产品质量和利润空间。</p>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa fa-heart text-primary text-2xl"></i>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <div class="text-center mb-4">
-                                <i class="fa fa-video-camera text-secondary text-3xl"></i>
-                            </div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">直播带货策略</h4>
-                            <ul class="text-gray-600 space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-secondary mt-1 mr-2"></i>
-                                    <span>集中主推爆款产品，形成规模效应</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-secondary mt-1 mr-2"></i>
-                                    <span>根据账号带货能力差异化引流</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-secondary mt-1 mr-2"></i>
-                                    <span>展示生产过程，增强产品可信度</span></li>
-                            </ul>
+                        <h4 class="font-semibold text-gray-800 mb-2">解决用户核心痛点</h4>
+                        <p class="text-gray-600 text-sm">每款产品都必须能够解决用户的实际问题</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa fa-shield text-secondary text-2xl"></i>
                         </div>
-                        <div class="bg-white p-6 rounded-lg shadow-md">
-                            <div class="text-center mb-4">
-                                <i class="fa fa-star text-accent text-3xl"></i>
-                            </div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">泛娱乐营销</h4>
-                            <ul class="text-gray-600 space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-accent mt-1 mr-2"></i>
-                                    <span>明星矩阵运营，覆盖不同目标人群</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-accent mt-1 mr-2"></i>
-                                    <span>综艺植入，提升品牌曝光度</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-accent mt-1 mr-2"></i>
-                                    <span>内容营销，建立品牌情感连接</span></li>
+                        <h4 class="font-semibold text-gray-800 mb-2">保证产品质量和安全</h4>
+                        <p class="text-gray-600 text-sm">建立严格的质量控制体系</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa fa-dollar text-accent text-2xl"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">具有合理的利润空间</h4>
+                        <p class="text-gray-600 text-sm">确保企业能够持续发展</p>
+                    </div>
+                    <div class="text-center">
+                        <div class="w-16 h-16 bg-neutral/10 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="fa fa-star text-neutral text-2xl"></i>
+                        </div>
+                        <h4 class="font-semibold text-gray-800 mb-2">差异化竞争优势</h4>
+                        <p class="text-gray-600 text-sm">避免陷入价格战的恶性循环</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 针对"用户迷茫"的选品 -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-12 border border-gray-100">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fa fa-lightbulb-o text-yellow-500 mr-3"></i>
+                    针对"用户迷茫"的选品：不做伪需求，只做解忧药
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">痛点剖析</h4>
+                        <p class="text-gray-600 mb-4">用户不知道"鱼油、卵磷脂、微量元素"是不是智商税，也不知道家里到底需不需要那么多杀菌喷雾。面对琳琅满目的产品，用户陷入选择困难，最终可能放弃购买。</p>
+                        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
+                            <h5 class="font-semibold text-yellow-800 mb-2">用户典型困惑</h5>
+                            <ul class="text-yellow-700 space-y-1">
+                                <li>• "鱼油真的有用吗？会不会是智商税？"</li>
+                                <li>• "卵磷脂和鱼油有什么区别？都需要买吗？"</li>
+                                <li>• "家里已经有驱虫药了，还需要杀菌喷雾吗？"</li>
+                                <li>• "微量元素补充剂是不是必须的？"</li>
                             </ul>
                         </div>
                     </div>
-                    <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
-                        <h4 class="text-xl font-semibold text-gray-800 mb-4">2025年宠物行业消费结构分析</h4>
-                        <img src="https://aka.doubaocdn.com/s/BAHK1w7Ia8" alt="2025年宠物行业消费结构" class="w-full rounded-lg shadow-md mb-4">
-                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">选品方案（组合拳）</h4>
+                        <div class="space-y-4">
                             <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                <h5 class="font-semibold text-blue-800 mb-2">消费结构特点</h5>
-                                <ul class="text-blue-700 space-y-1">
-                                    <li>• 食品市场仍是主要消费市场，市场份额为53.7%</li>
-                                    <li>• 医疗市场份额为27.6%，较2024年有所下降</li>
-                                    <li>• 用品、服务市场份额较低，分别为12.2%、6.5%</li></ul>
+                                <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                                    <i class="fa fa-arrow-right text-blue-500 mr-2"></i>
+                                    基础必需款（引流）
+                                </h5>
+                                <p class="text-blue-700">选取最高频、无争议的刚需品（如：除臭杀菌的基础消毒喷雾、基础驱虫套装）。用低客单价、高需求的产品吸引用户，建立初步信任。</p>
                             </div>
                             <div class="bg-green-50 p-4 rounded-lg border border-green-100">
-                                <h5 class="font-semibold text-green-800 mb-2">细分结构变化</h5>
+                                <h5 class="font-semibold text-green-800 mb-2 flex items-center">
+                                    <i class="fa fa-arrow-right text-green-500 mr-2"></i>
+                                    教育型产品（高利润）
+                                </h5>
+                                <p class="text-green-700">针对"营养补充剂"的迷茫，推出 "懒人营养套餐包" （如：每日一包=鱼油+卵磷脂+益生菌）。用组合装降低用户的选择恐惧症，利用这种"懒人经济"提高客单价和利润。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 针对"缺乏保障"的选品 -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-12 border border-gray-100">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fa fa-shield text-red-500 mr-3"></i>
+                    针对"缺乏保障"的选品：用硬认证解决信任危机
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">痛点剖析</h4>
+                        <p class="text-gray-600 mb-4">用户担心产品质量差、有毒、伤宠。由于市场上产品质量参差不齐，用户很难判断产品是否安全，这成为用户购买的最大障碍。</p>
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                            <h5 class="font-semibold text-red-800 mb-2">用户核心担忧</h5>
+                            <ul class="text-red-700 space-y-1">
+                                <li>• "这个产品会不会含有有害物质？"</li>
+                                <li>• "材料是否安全，宠物咬了会不会中毒？"</li>
+                                <li>• "产品质量有没有保障？"</li>
+                                <li>• "如果产品有问题，怎么办？"</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">选品方案</h4>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                                    <i class="fa fa-check-circle text-blue-500 mr-2"></i>
+                                    引入"安全认证"作为选品第一门槛
+                                </h5>
+                                <p class="text-blue-700">所有选品必须优先考虑通过或可申请第三方权威检测的产品（如SGS检测报告，涵盖重金属、有害物质、咬噬测试等）。</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                                <h5 class="font-semibold text-green-800 mb-2 flex items-center">
+                                    <i class="fa fa-bullhorn text-green-500 mr-2"></i>
+                                    选品卖点话术
+                                </h5>
+                                <p class="text-green-700">将"人用级别"、"食品级材质"、"通过XX认证"作为核心卖点直接打在包装和详情页上，让用户一眼就能看到安全保障。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 flex justify-center">
+                    <img src="https://aka.doubaocdn.com/s/DEe01vyx4o" alt="SGS认证标志" class="h-24 mx-4">
+                    <img src="https://aka.doubaocdn.com/s/dr841vyx4o" alt="权威认证标志" class="h-24 mx-4">
+                </div>
+                <p class="text-center text-gray-600 mt-4">所有产品均通过SGS等权威第三方机构检测认证</p>
+            </div>
+
+            <!-- 针对"价格敏感"与"推流成本"的选品 -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-12 border border-gray-100">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fa fa-balance-scale text-primary mr-3"></i>
+                    针对"价格敏感"与"推流成本"的选品：打造"低毛利引流+高利润收割"矩阵
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">痛点剖析</h4>
+                        <p class="text-gray-600 mb-4">猫砂、粮这类产品虽然好卖，但价格太透明，利润像纸一样薄（最低仅1%），只能引流不挣钱。同时，推流成本越来越高，单一产品难以覆盖营销成本。</p>
+                        <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                            <h5 class="font-semibold text-red-800 mb-2">传统选品的问题</h5>
+                            <ul class="text-red-700 space-y-1">
+                                <li>• 刚需品利润太低，难以盈利</li>
+                                <li>• 推流成本上升，利润下降</li>
+                                <li>• 用户只买低价产品，复购率低</li>
+                                <li>• 缺乏产品组合，难以提升客单价</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">选品方案（组合拳）</h4>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                                    <i class="fa fa-arrow-down text-blue-500 mr-2"></i>
+                                    引流款（低利润/负利润）
+                                </h5>
+                                <p class="text-blue-700">选择大包装/重物（如大规格猫砂、大袋狗粮）。利用其高复购率引流，但通过优化包装（如将小包装改为大包装降低包材成本）和优化物流（如利用送货上门服务解决重物搬运痛点）来挽回一点毛利，核心目的是拉新客。</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                                <h5 class="font-semibold text-green-800 mb-2 flex items-center">
+                                    <i class="fa fa-arrow-up text-green-500 mr-2"></i>
+                                    利润款（高毛利）
+                                </h5>
+                                <p class="text-green-700">选择周边消耗品/情绪产品（如宠物生日蛋糕、节日服饰、高端零食），利用引流款带来的流量进行交叉销售，提升整体利润。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8">
+                    <h4 class="text-xl font-semibold text-gray-800 mb-4">不同品类毛利率对比</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <div class="h-64" id="profitChart"></div>
+                        <div class="space-y-4">
+                            <div class="bg-gray-50 p-4 rounded-lg">
+                                <h5 class="font-semibold text-gray-800 mb-2">毛利率分析</h5>
+                                <ul class="space-y-2 text-gray-600">
+                                    <li class="flex justify-between">
+                                        <span>智能宠物设备</span>
+                                        <span class="font-bold text-primary">70%+</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span>高端营养补充品</span>
+                                        <span class="font-bold text-secondary">50%+</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span>专业护理产品</span>
+                                        <span class="font-bold text-accent">40%+</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span>宠物玩具</span>
+                                        <span class="font-bold text-neutral">23.4%</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span>宠物窝垫</span>
+                                        <span class="font-bold text-neutral">21.5%</span>
+                                    </li>
+                                    <li class="flex justify-between">
+                                        <span>宠物食品</span>
+                                        <span class="font-bold text-red-500">9.6%</span>
+                                    </li>
+                                </ul>
+                            </div>
+                            <div class="bg-primary/5 p-4 rounded-lg border border-primary/20">
+                                <h5 class="font-semibold text-primary mb-2">选品建议</h5>
+                                <p class="text-gray-700">重点发展智能设备和高端营养补充品等高利润产品，同时搭配适量的引流产品，形成完整的产品矩阵，实现利润最大化。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 差异化打法 -->
+    <section id="business" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">差异化打法——树立标杆与科技赋能</h2>
+            
+            <!-- 引流黑马：定制化的宠物配餐计划 -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-12">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fa fa-cutlery text-orange-500 mr-3"></i>
+                    引流黑马：定制化的"宠物配餐计划"
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">痛点解决</h4>
+                        <p class="text-gray-600 mb-4">用户不知道每天喂多少、怎么喂。面对各种宠物食品，用户很难判断哪种最适合自己的宠物，也不知道如何搭配营养。</p>
+                        <div class="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                            <h5 class="font-semibold text-orange-800 mb-2">用户典型困惑</h5>
+                            <ul class="text-orange-700 space-y-1">
+                                <li>• "每天应该喂多少粮才合适？"</li>
+                                <li>• "不同年龄段的宠物应该怎么搭配营养？"</li>
+                                <li>• "零食和营养品应该怎么喂？"</li>
+                                <li>• "我家宠物偏胖，应该怎么调整饮食？"</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">引流策略</h4>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                                    <i class="fa fa-money text-blue-500 mr-2"></i>
+                                    低资金段
+                                </h5>
+                                <p class="text-blue-700">制作电子版《XX品种宠物每日配餐指南》，通过私域/社群免费发放，附带简单的小包装试吃装链接，吸引用户关注。</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                                <h5 class="font-semibold text-green-800 mb-2 flex items-center">
+                                    <i class="fa fa-calendar text-green-500 mr-2"></i>
+                                    高资金段
+                                </h5>
+                                <p class="text-green-700">推出"按月订购"的定制化配餐盲盒。根据宠物体重、年龄，每月寄送搭配好的主粮、零食、营养品小包，锁定长期复购。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 建立壁垒：试水智能硬件 -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-12">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fa fa-microchip text-purple-500 mr-3"></i>
+                    建立壁垒：试水智能硬件（如宠物智能健康项圈）
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">趋势洞察</h4>
+                        <p class="text-gray-600 mb-4">AI+宠物是未来，但目前市场产品两极分化严重（功能鸡肋 vs 价格虚高），用户想买但怕被骗。大多数智能产品要么功能华而不实，要么价格过高，让用户望而却步。</p>
+                        <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                            <h5 class="font-semibold text-purple-800 mb-2">市场现状</h5>
+                            <ul class="text-purple-700 space-y-1">
+                                <li>• 功能鸡肋：很多智能产品功能华而不实，实用性不强</li>
+                                <li>• 价格虚高：高端产品价格动辄上千元，超出用户承受范围</li>
+                                <li>• 数据不准确：很多产品的数据监测不准确，参考价值低</li>
+                                <li>• 用户体验差：App界面复杂，数据展示不直观</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">选品切入点</h4>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                                    <i class="fa fa-heartbeat text-blue-500 mr-2"></i>
+                                    核心功能
+                                </h5>
+                                <p class="text-blue-700">选取能解决真实焦虑的功能——监测睡眠、步态分析（预警关节问题）、心率血压（预警心脏问题）。专注于解决用户真正关心的健康问题。</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                                <h5 class="font-semibold text-green-800 mb-2 flex items-center">
+                                    <i class="fa fa-exclamation-circle text-green-500 mr-2"></i>
+                                    避坑指南
+                                </h5>
+                                <p class="text-green-700">坚决不做噱头功能（如情绪识别）。重点强调数据的准确率和医疗级参考价值，并与App生成的可视化健康报告结合，让用户"看得懂、能转发"。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 flex flex-col md:flex-row items-center justify-center space-y-4 md:space-y-0 md:space-x-8">
+                    <img src="https://aka.doubaocdn.com/s/FXXY1vyx53" alt="智能健康项圈" class="h-48 rounded-lg shadow-md">
+                    <div class="text-center md:text-left">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">智能健康项圈功能</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                            <div class="flex items-center">
+                                <i class="fa fa-heart text-red-500 mr-2"></i>
+                                <span>实时监测心率、血压</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa fa-moon-o text-blue-500 mr-2"></i>
+                                <span>分析睡眠质量和规律</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa fa-paw text-green-500 mr-2"></i>
+                                <span>监测步态，预警关节问题</span>
+                            </div>
+                            <div class="flex items-center">
+                                <i class="fa fa-mobile text-purple-500 mr-2"></i>
+                                <span>App生成健康报告</span>
+                            </div>
+                        </div>
+                        <div class="mt-4 p-4 bg-primary/5 rounded-lg">
+                            <p class="text-primary font-semibold">市场前景广阔，预计年增长率超过30%，毛利率可达70%+</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 bg-gray-50 p-6 rounded-lg">
+                    <h4 class="text-xl font-semibold text-gray-800 mb-4">宠物科技用品未来期待</h4>
+                    <img src="https://aka.doubaocdn.com/s/RfQY1w7Ia8" alt="宠物科技用品未来期待" class="w-full rounded-lg shadow-md">
+                    <p class="text-center text-gray-600 mt-4">用户对宠物科技用品的期待，设备自动适配需求（48.4%）和宠物行为习惯分析（42.8%）最受关注</p>
+                </div>
+            </div>
+
+            <!-- 标杆学习：参考"网易严选"模式 -->
+            <div class="bg-white rounded-xl shadow-md p-8">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fa fa-star text-yellow-500 mr-3"></i>
+                    标杆学习：参考"网易严选"模式
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">选品逻辑</h4>
+                        <p class="text-gray-600 mb-4">仿照"网易严选"的ODM模式，深入供应链上游，剔除品牌溢价。通过直接与工厂合作，减少中间环节，为用户提供高性价比的产品。</p>
+                        <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
+                            <h5 class="font-semibold text-yellow-800 mb-2">ODM模式优势</h5>
+                            <ul class="text-yellow-700 space-y-1">
+                                <li>• 剔除品牌溢价，降低产品成本</li>
+                                <li>• 直接控制产品质量，确保品质</li>
+                                <li>• 可以定制化开发产品，满足用户需求</li>
+                                <li>• 建立供应链壁垒，提高竞争门槛</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">具体做法</h4>
+                        <p class="text-gray-600 mb-4">寻找一线大牌（如Pidan等）的同源代工厂，主打"工厂直供"、"大牌品质，一半价格"。利用大牌的工艺标准（确定性），卖自己的价格（性价比），快速建立用户对"品质"的信任。</p>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                                    <i class="fa fa-industry text-blue-500 mr-2"></i>
+                                    工厂合作
+                                </h5>
+                                <p class="text-blue-700">与一线品牌的代工厂直接合作，确保产品品质与大牌一致</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                                <h5 class="font-semibold text-green-800 mb-2 flex items-center">
+                                    <i class="fa fa-tag text-green-500 mr-2"></i>
+                                    定价策略
+                                </h5>
+                                <p class="text-green-700">以大牌一半的价格销售，突出性价比优势</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 flex justify-center">
+                    <img src="https://aka.doubaocdn.com/s/83Oj1vyx58" alt="网易严选平台" class="h-32 rounded-lg shadow-md">
+                </div>
+                <p class="text-center text-gray-600 mt-4">参考网易严选模式，打造高性价比的宠物用品品牌</p>
+            </div>
+        </div>
+    </section>
+	<!-- 引流策略规划 -->
+	<section id="drainage" class="py-16 bg-gray-50">
+	  <div class="container mx-auto px-4">
+		<h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">引流策略规划——精准获客与高效转化</h2>
+		
+		<!-- 不同资金段的引流方案（修改核心部分） -->
+		<div class="bg-white rounded-xl p-8 mb-12 shadow-md border border-gray-100">
+		  <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+			<i class="fa fa-line-chart text-blue-500 mr-3"></i>不同资金段的引流方案
+		  </h3>
+		  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+			<!-- 低预算 -->
+			<div class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+			  <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+				<i class="fa fa-money text-amber-500 text-2xl"></i>
+			  </div>
+			  <h4 class="text-xl font-bold text-gray-800 mb-4 text-center">低预算（1-5万）</h4>
+			  <h5 class="font-bold text-blue-600 mb-3">核心策略：内容种草+私域引流</h5>
+			  <ul class="space-y-3 text-gray-600">
+				<li class="flex items-start">
+				  <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
+				  <span>小红书/抖音免费内容：养宠知识、产品测评</span>
+				</li>
+				<li class="flex items-start">
+				  <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
+				  <span>宠物社群运营：免费配餐指南分享</span>
+				</li>
+				<li class="flex items-start">
+				  <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
+				  <span>宠物论坛/问答平台：专业问题解答</span>
+				</li>
+				<li class="flex items-start">
+				  <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
+				  <span>宠物医院合作：优惠券发放</span>
+				</li>
+			  </ul>
+			  <div class="mt-4 p-3 bg-amber-50 rounded-lg">
+				<p class="text-sm text-gray-700">
+				  <span class="font-bold text-amber-600">预期效果：</span>月获客500-1000人，转化率10-15%
+				</p>
+			  </div>
+			</div>
+
+			<!-- 中预算 -->
+			<div class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+			  <div class="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+				<i class="fa fa-credit-card text-emerald-500 text-2xl"></i>
+			  </div>
+			  <h4 class="text-xl font-bold text-gray-800 mb-4 text-center">中预算（5-20万）</h4>
+			  <h5 class="font-bold text-blue-600 mb-3">核心策略：付费推广+达人合作</h5>
+			  <ul class="space-y-3 text-gray-600">
+				<li class="flex items-start">
+				  <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
+				  <span>宠物达人合作：中腰部博主产品推荐</span>
+				</li>
+				<li class="flex items-start">
+				  <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
+				  <span>抖音/小红书信息流广告：精准定向投放</span>
+				</li>
+				<li class="flex items-start">
+				  <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
+				  <span>宠物配餐计划小程序：免费试用推广</span>
+				</li>
+				<li class="flex items-start">
+				  <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
+				  <span>宠物展会参展：品牌曝光与获客</span>
+				</li>
+			  </ul>
+			  <div class="mt-4 p-3 bg-emerald-50 rounded-lg">
+				<p class="text-sm text-gray-700">
+				  <span class="font-bold text-emerald-600">预期效果：</span>月获客2000-5000人，转化率15-20%
+				</p>
+			  </div>
+			</div>
+
+			<!-- 高预算 -->
+			<div class="bg-white rounded-lg p-6 shadow-md hover:shadow-lg transition-shadow border border-gray-100">
+			  <div class="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mb-4 mx-auto">
+				<i class="fa fa-trophy text-blue-500 text-2xl"></i>
+			  </div>
+			  <h4 class="text-xl font-bold text-gray-800 mb-4 text-center">高预算（20万以上）</h4>
+			  <h5 class="font-bold text-blue-600 mb-3">核心策略：品牌建设+全渠道营销</h5>
+			  <ul class="space-y-3 text-gray-600">
+				<li class="flex items-start">
+				  <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
+				  <span>头部宠物博主代言：品牌形象塑造</span>
+				</li>
+				<li class="flex items-start">
+				  <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
+				  <span>多平台广告投放：抖音、小红书、B站</span>
+				</li>
+				<li class="flex items-start">
+				  <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
+				  <span>宠物配餐计划小程序：付费推广</span>
+				</li>
+				<li class="flex items-start">
+				  <i class="fa fa-check-circle text-blue-500 mr-2 mt-1"></i>
+				  <span>线下宠物体验馆：品牌体验与转化</span>
+				</li>
+			  </ul>
+			  <div class="mt-4 p-3 bg-blue-50 rounded-lg">
+				<p class="text-sm text-gray-700">
+				  <span class="font-bold text-blue-600">预期效果：</span>月获客10000+人，转化率20-30%
+				</p>
+			  </div>
+			</div>
+		  </div>
+		</div>
+
+		<!-- 宠物配餐计划小程序 -->
+		<div class="bg-white rounded-xl shadow-lg p-8 mb-12">
+		  <h3 class="text-2xl font-bold text-gray-800 mb-6 flex items-center">
+			<i class="fa fa-calculator text-blue-500 mr-3"></i>宠物配餐计划小程序——核心引流工具
+		  </h3>
+		  <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+			<div>
+			  <h4 class="text-xl font-bold text-gray-800 mb-4">功能核心价值</h4>
+			  <div class="space-y-4">
+				<div class="bg-gray-100 rounded-lg p-4">
+				  <h5 class="font-bold text-blue-600 mb-2">
+					<i class="fa fa-calculator mr-2"></i>智能配餐计算
+				  </h5>
+				  <p class="text-gray-600">
+					根据宠物品种、年龄、体重、活动量，自动计算每日所需营养和喂食量
+				  </p>
+				</div>
+				<div class="bg-gray-100 rounded-lg p-4">
+				  <h5 class="font-bold text-blue-600 mb-2">
+					<i class="fa fa-book mr-2"></i>个性化饮食方案
+				  </h5>
+				  <p class="text-gray-600">
+					提供针对性的饮食建议，包括主粮、零食、营养品的搭配方案
+				  </p>
+				</div>
+				<div class="bg-gray-100 rounded-lg p-4">
+				  <h5 class="font-bold text-blue-600 mb-2">
+					<i class="fa fa-bell mr-2"></i>定时喂食提醒
+				  </h5>
+				  <p class="text-gray-600">
+					设置宠物喂食时间，定时提醒用户，养成良好的喂食习惯
+				  </p>
+				</div>
+				<div class="bg-gray-100 rounded-lg p-4">
+				  <h5 class="font-bold text-blue-600 mb-2">
+					<i class="fa fa-shopping-cart mr-2"></i>一键购买功能
+				  </h5>
+				  <p class="text-gray-600">
+					根据配餐方案，直接推荐并购买对应的产品，简化用户购买流程
+				  </p>
+				</div>
+			  </div>
+			</div>
+			<div>
+			  <h4 class="text-xl font-bold text-gray-800 mb-4">用户转化流程设计</h4>
+			  <div class="relative">
+				<div class="absolute left-4 top-0 bottom-0 w-0.5 bg-blue-200"></div>
+				<div class="space-y-8 pl-12">
+				  <div class="relative">
+					<div class="absolute -left-12 top-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+					  <span class="text-white text-sm font-bold">1</span>
+					</div>
+					<h5 class="font-bold text-gray-800 mb-2">免费使用小程序</h5>
+					<p class="text-gray-600">用户通过扫码或链接进入小程序，免费使用智能配餐功能</p>
+				  </div>
+				  <div class="relative">
+					<div class="absolute -left-12 top-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+					  <span class="text-white text-sm font-bold">2</span>
+					</div>
+					<h5 class="font-bold text-gray-800 mb-2">获取个性化配餐方案</h5>
+					<p class="text-gray-600">用户输入宠物信息，获取专业的配餐建议和营养分析</p>
+				  </div>
+				  <div class="relative">
+					<div class="absolute -left-12 top-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+					  <span class="text-white text-sm font-bold">3</span>
+					</div>
+					<h5 class="font-bold text-gray-800 mb-2">查看推荐产品</h5>
+					<p class="text-gray-600">小程序根据配餐方案，推荐对应的主粮、零食和营养品</p>
+				  </div>
+				  <div class="relative">
+					<div class="absolute -left-12 top-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+					  <span class="text-white text-sm font-bold">4</span>
+					</div>
+					<h5 class="font-bold text-gray-800 mb-2">完成购买转化</h5>
+					<p class="text-gray-600">用户通过一键购买功能，直接购买推荐产品，完成转化</p>
+				  </div>
+				  <div class="relative">
+					<div class="absolute -left-12 top-1 w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+					  <span class="text-white text-sm font-bold">5</span>
+					</div>
+					<h5 class="font-bold text-gray-800 mb-2">复购与留存</h5>
+					<p class="text-gray-600">通过定时提醒、个性化推荐等功能，促进用户复购和长期留存</p>
+				  </div>
+				</div>
+			  </div>
+			</div>
+		  </div>
+		</div>
+	  </div>
+	</section>
+	
+    <!-- 行业TOP10特点和打法分析 -->
+    <section id="top10" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">行业TOP10特点和打法分析</h2>
+            
+            <!-- TOP10品牌排行 -->
+            <div class="bg-gray-50 rounded-xl shadow-sm p-8 mb-12">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">2024-2025年宠物行业TOP10品牌排行</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">2024年H1排行</h4>
+                        <img src="https://aka.doubaocdn.com/s/FGew1w7Ia8" alt="2024年H1宠物行业TOP10品牌排行" class="w-full rounded-lg">
+                        <p class="text-center text-gray-600 mt-4">国产品牌销售额占比：55.0%</p>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">2025年H1排行</h4>
+                        <img src="https://aka.doubaocdn.com/s/FGew1w7Ia8" alt="2025年H1宠物行业TOP10品牌排行" class="w-full rounded-lg">
+                        <p class="text-center text-gray-600 mt-4">国产品牌销售额占比：67.2%</p>
+                    </div>
+                </div>
+                <div class="mt-8 bg-primary/5 p-6 rounded-lg border border-primary/20">
+                    <h4 class="text-xl font-semibold text-primary mb-3">关键洞察</h4>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h5 class="font-semibold text-gray-800 mb-2">国产品牌崛起</h5>
+                            <p class="text-gray-600 text-sm">国产品牌销售额占比从55.0%提升到67.2%，市场份额显著增长</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h5 class="font-semibold text-gray-800 mb-2">头部品牌稳定</h5>
+                            <p class="text-gray-600 text-sm">皇家和麦富迪稳居前两名，品牌忠诚度较高</p>
+                        </div>
+                        <div class="bg-white p-4 rounded-lg shadow-sm">
+                            <h5 class="font-semibold text-gray-800 mb-2">新品牌涌现</h5>
+                            <p class="text-gray-600 text-sm">诚实一口、弗列加特等新品牌进入TOP10</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 麦富迪案例深度拆解 -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-12 border border-gray-100">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fa fa-bullseye text-accent mr-3"></i>
+                    麦富迪案例深度拆解：国产品牌头部打法
+                </h3>
+                
+                <!-- 自营矩阵分析 -->
+                <div class="mb-8">
+                    <h4 class="text-xl font-semibold text-gray-800 mb-4">自营矩阵：猫狗产品阵地垂直化推广</h4>
+                    <img src="https://aka.doubaocdn.com/s/YbXb1w7Ia8" alt="麦富迪自营矩阵" class="w-full rounded-lg shadow-md mb-4">
+                    <p class="text-gray-600 mb-4">近一年来，麦富迪因其自身全面细致的产品线，在推广内容上也以猫/狗为核心角色垂直运营，将产品介绍融入猫狗日常做软广，而开宗明义的叫卖式营销则为直播引流服务。</p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <h5 class="font-semibold text-blue-800 mb-2">猫咪产品自营矩阵</h5>
+                            <ul class="text-blue-700 space-y-1">
+                                <li>• 麦富迪爱宠专卖店</li>
+                                <li>• 麦富迪宠沃宠物专卖店</li>
+                                <li>• 麦富迪猫咪严选</li>
+                                <li>• 麦富迪凯激特专卖店</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                            <h5 class="font-semibold text-green-800 mb-2">狗狗产品自营矩阵</h5>
+                            <ul class="text-green-700 space-y-1">
+                                <li>• 麦富迪喵犬专卖店</li>
+                                <li>• 麦富迪宠物用品直播店</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 直播内容分析 -->
+                <div class="mb-8">
+                    <h4 class="text-xl font-semibold text-gray-800 mb-4">直播内容：自播账号带货能力高，集中推爆款</h4>
+                    <img src="https://aka.doubaocdn.com/s/4Knt1w7Ia8" alt="麦富迪直播内容" class="w-full rounded-lg shadow-md mb-4">
+                    <p class="text-gray-600 mb-4">麦富迪自播达人从商品上来看，集中主推爆款冻干三文鱼猫粮及营养森林系列肉松狗粮，根据账号带货能力以产品适用类型/包装以及售价分别引流。</p>
+                    <div class="bg-gray-50 p-4 rounded-lg">
+                        <h5 class="font-semibold text-gray-800 mb-2">直播策略特点</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="text-center">
+                                <i class="fa fa-video-camera text-primary text-2xl mb-2"></i>
+                                <h6 class="font-semibold text-gray-800">深入车间</h6>
+                                <p class="text-gray-600 text-sm">展示生产过程，增强产品可信度</p>
+                            </div>
+                            <div class="text-center">
+                                <i class="fa fa-users text-secondary text-2xl mb-2"></i>
+                                <h6 class="font-semibold text-gray-800">产品介绍+社群引导</h6>
+                                <p class="text-gray-600 text-sm">专业讲解产品特点，引导用户加入社群</p>
+                            </div>
+                            <div class="text-center">
+                                <i class="fa fa-tags text-accent text-2xl mb-2"></i>
+                                <h6 class="font-semibold text-gray-800">品牌&产品介绍</h6>
+                                <p class="text-gray-600 text-sm">强化品牌认知，突出产品优势</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 泛娱乐营销分析 -->
+                <div>
+                    <h4 class="text-xl font-semibold text-gray-800 mb-4">泛娱乐营销：明星矩阵细致运营促进转化</h4>
+                    <img src="https://aka.doubaocdn.com/s/Yznc1w7Ia8" alt="麦富迪泛娱乐营销" class="w-full rounded-lg shadow-md mb-4">
+                    <p class="text-gray-600 mb-4">麦富迪开创了宠物行业泛娱乐营销的先河，从戏剧影视到明星综艺，电视剧《老男孩》、慢综艺《向往的生活》、萌宠竞技《战斗吧萌犬》等相关媒体内容的渗入，试图将潮流、活力及年轻化的多元价值与Z世代年轻人的个性彰显链接。</p>
+                    <div class="bg-purple-50 p-6 rounded-lg border border-purple-100">
+                        <h5 class="font-semibold text-purple-800 mb-4">明星矩阵功能分析</h5>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <h6 class="font-semibold text-purple-700 mb-2">品牌代言人 - 谢霆锋</h6>
+                                <p class="text-purple-600">IP联名——匠造宠食新锋味，代表创新、高品质及高标准的生活方式和精神价值</p>
+                            </div>
+                            <div>
+                                <h6 class="font-semibold text-purple-700 mb-2">品牌青春大使 - 尹浩宇</h6>
+                                <p class="text-purple-600">全面推广，主要布局于电商推广，服务于引流和直播带货，着力于对年轻圈层的发力</p>
+                            </div>
+                            <div>
+                                <h6 class="font-semibold text-purple-700 mb-2">天性喂养大使 - 萧敬腾</h6>
+                                <p class="text-purple-600">代表barf霸弗产品线，即符合生物天性的生骨肉喂养饮食，喂食生骨肉及健康食物</p>
+                            </div>
+                            <div>
+                                <h6 class="font-semibold text-purple-700 mb-2">推广大使 - 杨迪</h6>
+                                <p class="text-purple-600">《麦富迪全民找杨迪》营销活动，在大型事件营销和冠名综艺中提升品牌知名度</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 头部品牌打法借鉴 -->
+            <div class="bg-gray-50 rounded-xl shadow-sm p-8">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">头部品牌打法借鉴</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-center mb-4">
+                            <i class="fa fa-sitemap text-primary text-3xl"></i>
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">矩阵化运营</h4>
+                        <ul class="text-gray-600 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-primary mt-1 mr-2"></i>
+                                <span>建立多品牌矩阵，覆盖不同细分市场</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-primary mt-1 mr-2"></i>
+                                <span>垂直化运营，针对不同宠物类型建立专门渠道</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-primary mt-1 mr-2"></i>
+                                <span>差异化定位，满足不同用户需求</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-center mb-4">
+                            <i class="fa fa-video-camera text-secondary text-3xl"></i>
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">直播带货策略</h4>
+                        <ul class="text-gray-600 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-secondary mt-1 mr-2"></i>
+                                <span>集中主推爆款产品，形成规模效应</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-secondary mt-1 mr-2"></i>
+                                <span>根据账号带货能力差异化引流</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-secondary mt-1 mr-2"></i>
+                                <span>展示生产过程，增强产品可信度</span>
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <div class="text-center mb-4">
+                            <i class="fa fa-star text-accent text-3xl"></i>
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">泛娱乐营销</h4>
+                        <ul class="text-gray-600 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>明星矩阵运营，覆盖不同目标人群</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>综艺植入，提升品牌曝光度</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>内容营销，建立品牌情感连接</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="mt-8 bg-white p-6 rounded-lg shadow-md">
+                    <h4 class="text-xl font-semibold text-gray-800 mb-4">2025年宠物行业消费结构分析</h4>
+                    <img src="https://aka.doubaocdn.com/s/BAHK1w7Ia8" alt="2025年宠物行业消费结构" class="w-full rounded-lg shadow-md mb-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                            <h5 class="font-semibold text-blue-800 mb-2">消费结构特点</h5>
+                            <ul class="text-blue-700 space-y-1">
+                                <li>• 食品市场仍是主要消费市场，市场份额为53.7%</li>
+                                <li>• 医疗市场份额为27.6%，较2024年有所下降</li>
+                                <li>• 用品、服务市场份额较低，分别为12.2%、6.5%</li>
+                            </ul>
+                        </div>
+                        <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                            <h5 class="font-semibold text-green-800 mb-2">细分结构变化</h5>
+                            <ul class="text-green-700 space-y-1">
+                                <li>• 食品领域中，主粮、零食、营养品份额较2024年小幅上升</li>
+                                <li>• 医疗领域中体检小幅上升，药品、诊疗小幅下降</li>
+                                <li>• 吃仍是主旋律，医疗赛道"踩刹车"</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 宠物行业方向分类 -->
+    <section id="classification" class="py-16 bg-gray-50">
+        <div class="container mx-auto px-4">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">宠物行业方向分类与发展策略</h2>
+            
+            <!-- 宠物用品分类及定义 -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-12">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">宠物用品分类及定义</h3>
+                <img src="https://aka.doubaocdn.com/s/wJoK1w7InZ" alt="宠物用品分类及定义" class="w-full rounded-lg shadow-md mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">分类分析</h4>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h5 class="font-semibold text-blue-800 mb-2">宠物食品（核心刚需）</h5>
+                                <p class="text-blue-700">包括主粮、特殊配方食品及零食，满足宠物日常营养需求，市场份额最大，是最基础的品类。</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                                <h5 class="font-semibold text-green-800 mb-2">护理美容（高频消耗）</h5>
+                                <p class="text-green-700">涵盖洗护用品、美容工具及口腔清洁产品，保持宠物卫生与健康，复购率高。</p>
+                            </div>
+                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
+                                <h5 class="font-semibold text-yellow-800 mb-2">生活用品（基础保障）</h5>
+                                <p class="text-yellow-700">包含窝垫、笼舍、食具、清洁用具及运输装备，提供宠物居住与出行基础保障。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">选品优先级</h4>
+                        <div class="space-y-4">
+                            <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                                <h5 class="font-semibold text-red-800 mb-2">第一优先级：宠物食品</h5>
+                                <p class="text-red-700">刚需产品，市场需求稳定，适合作为引流产品建立用户信任。</p>
+                            </div>
+                            <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                                <h5 class="font-semibold text-purple-800 mb-2">第二优先级：护理美容</h5>
+                                <p class="text-purple-700">高频消耗品，利润空间可观，适合作为利润产品。</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                                <h5 class="font-semibold text-gray-800 mb-2">第三优先级：智能用品</h5>
+                                <p class="text-gray-700">未来趋势产品，毛利率高，适合作为高端产品提升品牌形象。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 重点企业发展潜力排名 -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-12">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">2025年中国宠物用品重点企业发展潜力排名</h3>
+                <img src="https://aka.doubaocdn.com/s/z99z1w7InZ" alt="2025年中国宠物用品重点企业发展潜力排名" class="w-full rounded-lg shadow-md mb-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">企业发展模式分析</h4>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h5 class="font-semibold text-blue-800 mb-2">线上线下协同型</h5>
+                                <p class="text-blue-700">代表企业：中宠股份，优势是供应链整合能力强，基地优势显著，适合规模化发展。</p>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                                <h5 class="font-semibold text-green-800 mb-2">线上主导型</h5>
+                                <p class="text-green-700">代表企业：乖宝宠物、霍曼Homerun、依依股份等，优势是技术研发能力强，市场响应速度快。</p>
+                            </div>
+                            <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
+                                <h5 class="font-semibold text-yellow-800 mb-2">线下高端合作型</h5>
+                                <p class="text-yellow-700">代表企业：福莱希Flexi、ISB伊珊娜，优势是技术专利强，高端市场渗透率高。</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">企业优势分析</h4>
+                        <div class="space-y-4">
+                            <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                                <h5 class="font-semibold text-red-800 mb-2">技术创新优势</h5>
+                                <p class="text-red-700">代表企业：乖宝宠物（AI营养配餐系统）、霍曼Homerun（气味感应温控技术），通过技术创新建立竞争壁垒。</p>
+                            </div>
+                            <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                                <h5 class="font-semibold text-purple-800 mb-2">产品设计优势</h5>
+                                <p class="text-purple-700">代表企业：pidan彼诞（设计创新能力强，海外市场占比40%），通过产品设计差异化赢得市场。</p>
+                            </div>
+                            <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
+                                <h5 class="font-semibold text-gray-800 mb-2">全球化布局优势</h5>
+                                <p class="text-gray-700">代表企业：天元宠物、霍曼Homerun，通过全球化布局分散风险，扩大市场份额。</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 线上线下发展策略 -->
+            <div class="bg-white rounded-xl shadow-md p-8">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">线上线下发展策略：前期线上获客，线下打造IP</h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">前期：线上获客与品牌建设</h4>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                                    <i class="fa fa-laptop text-blue-500 mr-2"></i>
+                                    线上渠道布局
+                                </h5>
+                                <ul class="text-blue-700 space-y-1">
+                                    <li>• 电商平台：淘宝、京东、拼多多等主流平台</li>
+                                    <li>• 内容平台：小红书、抖音、B站等种草平台</li>
+                                    <li>• 私域流量：微信群、企业微信、公众号等</li>
+                                    <li>• 垂直平台：宠物社区、宠物论坛等</li>
+                                </ul>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                                <h5 class="font-semibold text-green-800 mb-2 flex items-center">
+                                    <i class="fa fa-bullhorn text-green-500 mr-2"></i>
+                                    线上营销策略
+                                </h5>
                                 <ul class="text-green-700 space-y-1">
-                                    <li>• 食品领域中，主粮、零食、营养品份额较2024年小幅上升</li>
-                                    <li>• 医疗领域中体检小幅上升，药品、诊疗小幅下降</li>
-                                    <li>• 吃仍是主旋律，医疗赛道"踩刹车"</li></ul>
+                                    <li>• 内容营销：专业养宠知识、产品使用体验</li>
+                                    <li>• KOL合作：宠物博主、达人推荐</li>
+                                    <li>• 直播带货：品牌自播+达人合作直播</li>
+                                    <li>• 社群运营：用户互动、口碑传播</li>
+                                </ul>
                             </div>
                         </div>
                     </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">后期：线下IP打造与体验升级</h4>
+                        <div class="space-y-4">
+                            <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                                <h5 class="font-semibold text-purple-800 mb-2 flex items-center">
+                                    <i class="fa fa-map-marker text-purple-500 mr-2"></i>
+                                    线下场景布局
+                                </h5>
+                                <ul class="text-purple-700 space-y-1">
+                                    <li>• 品牌体验店：产品展示、用户体验、互动活动</li>
+                                    <li>• 宠物生活馆：宠物美容、宠物寄养、宠物训练</li>
+                                    <li>• 主题快闪店：品牌推广、用户互动、IP营销</li>
+                                    <li>• 合作门店：宠物店、宠物医院、宠物乐园</li>
+                                </ul>
+                            </div>
+                            <div class="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                                <h5 class="font-semibold text-orange-800 mb-2 flex items-center">
+                                    <i class="fa fa-star text-orange-500 mr-2"></i>
+                                    IP打造策略
+                                </h5>
+                                <ul class="text-orange-700 space-y-1">
+                                    <li>• 品牌IP形象：可爱、专业、可信赖的品牌形象</li>
+                                    <li>• 主题活动：宠物比赛、宠物嘉年华、亲子活动</li>
+                                    <li>• 周边产品：品牌周边、文创产品、纪念品</li>
+                                    <li>• 跨界合作：与其他品牌、IP合作，扩大影响力</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-8 bg-primary/5 p-6 rounded-lg border border-primary/20">
+                    <h4 class="text-xl font-semibold text-primary mb-3">发展路径</h4>
+                    <p class="text-gray-700 text-lg">通过线上渠道快速获客，建立品牌认知和用户基础，积累一定的用户群体和品牌影响力后，再通过线下场景打造品牌IP，提供更丰富的用户体验，形成线上线下协同发展的商业模式。</p>
                 </div>
             </div>
-        </section>
-        <!-- 宠物行业方向分类 -->
-        <section id="classification" class="py-16 bg-gray-50">
-            <div class="container mx-auto px-4">
-                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">宠物行业方向分类与发展策略</h2>
-                <!-- 宠物用品分类及定义 -->
-                <div class="bg-white rounded-xl shadow-md p-8 mb-12">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">宠物用品分类及定义</h3>
-                    <img src="https://aka.doubaocdn.com/s/wJoK1w7InZ" alt="宠物用品分类及定义" class="w-full rounded-lg shadow-md mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">分类分析</h4>
-                            <div class="space-y-4">
-                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                    <h5 class="font-semibold text-blue-800 mb-2">宠物食品（核心刚需）</h5>
-                                    <p class="text-blue-700">包括主粮、特殊配方食品及零食，满足宠物日常营养需求，市场份额最大，是最基础的品类。</p></div>
-                                <div class="bg-green-50 p-4 rounded-lg border border-green-100">
-                                    <h5 class="font-semibold text-green-800 mb-2">护理美容（高频消耗）</h5>
-                                    <p class="text-green-700">涵盖洗护用品、美容工具及口腔清洁产品，保持宠物卫生与健康，复购率高。</p></div>
-                                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
-                                    <h5 class="font-semibold text-yellow-800 mb-2">生活用品（基础保障）</h5>
-                                    <p class="text-yellow-700">包含窝垫、笼舍、食具、清洁用具及运输装备，提供宠物居住与出行基础保障。</p></div>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">选品优先级</h4>
-                            <div class="space-y-4">
-                                <div class="bg-red-50 p-4 rounded-lg border border-red-100">
-                                    <h5 class="font-semibold text-red-800 mb-2">第一优先级：宠物食品</h5>
-                                    <p class="text-red-700">刚需产品，市场需求稳定，适合作为引流产品建立用户信任。</p></div>
-                                <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
-                                    <h5 class="font-semibold text-purple-800 mb-2">第二优先级：护理美容</h5>
-                                    <p class="text-purple-700">高频消耗品，利润空间可观，适合作为利润产品。</p></div>
-                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                                    <h5 class="font-semibold text-gray-800 mb-2">第三优先级：智能用品</h5>
-                                    <p class="text-gray-700">未来趋势产品，毛利率高，适合作为高端产品提升品牌形象。</p></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 重点企业发展潜力排名 -->
-                <div class="bg-white rounded-xl shadow-md p-8 mb-12">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">2025年中国宠物用品重点企业发展潜力排名</h3>
-                    <img src="https://aka.doubaocdn.com/s/z99z1w7InZ" alt="2025年中国宠物用品重点企业发展潜力排名" class="w-full rounded-lg shadow-md mb-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">企业发展模式分析</h4>
-                            <div class="space-y-4">
-                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                    <h5 class="font-semibold text-blue-800 mb-2">线上线下协同型</h5>
-                                    <p class="text-blue-700">代表企业：中宠股份，优势是供应链整合能力强，基地优势显著，适合规模化发展。</p></div>
-                                <div class="bg-green-50 p-4 rounded-lg border border-green-100">
-                                    <h5 class="font-semibold text-green-800 mb-2">线上主导型</h5>
-                                    <p class="text-green-700">代表企业：乖宝宠物、霍曼Homerun、依依股份等，优势是技术研发能力强，市场响应速度快。</p></div>
-                                <div class="bg-yellow-50 p-4 rounded-lg border border-yellow-100">
-                                    <h5 class="font-semibold text-yellow-800 mb-2">线下高端合作型</h5>
-                                    <p class="text-yellow-700">代表企业：福莱希Flexi、ISB伊珊娜，优势是技术专利强，高端市场渗透率高。</p></div>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">企业优势分析</h4>
-                            <div class="space-y-4">
-                                <div class="bg-red-50 p-4 rounded-lg border border-red-100">
-                                    <h5 class="font-semibold text-red-800 mb-2">技术创新优势</h5>
-                                    <p class="text-red-700">代表企业：乖宝宠物（AI营养配餐系统）、霍曼Homerun（气味感应温控技术），通过技术创新建立竞争壁垒。</p></div>
-                                <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
-                                    <h5 class="font-semibold text-purple-800 mb-2">产品设计优势</h5>
-                                    <p class="text-purple-700">代表企业：pidan彼诞（设计创新能力强，海外市场占比40%），通过产品设计差异化赢得市场。</p></div>
-                                <div class="bg-gray-50 p-4 rounded-lg border border-gray-100">
-                                    <h5 class="font-semibold text-gray-800 mb-2">全球化布局优势</h5>
-                                    <p class="text-gray-700">代表企业：天元宠物、霍曼Homerun，通过全球化布局分散风险，扩大市场份额。</p></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 线上线下发展策略 -->
-                <div class="bg-white rounded-xl shadow-md p-8">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">线上线下发展策略：前期线上获客，线下打造IP</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">前期：线上获客与品牌建设</h4>
-                            <div class="space-y-4">
-                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                    <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
-                                        <i class="fa fa-laptop text-blue-500 mr-2"></i>线上渠道布局</h5>
-                                    <ul class="text-blue-700 space-y-1">
-                                        <li>• 电商平台：淘宝、京东、拼多多等主流平台</li>
-                                        <li>• 内容平台：小红书、抖音、B站等种草平台</li>
-                                        <li>• 私域流量：微信群、企业微信、公众号等</li>
-                                        <li>• 垂直平台：宠物社区、宠物论坛等</li></ul>
-                                </div>
-                                <div class="bg-green-50 p-4 rounded-lg border border-green-100">
-                                    <h5 class="font-semibold text-green-800 mb-2 flex items-center">
-                                        <i class="fa fa-bullhorn text-green-500 mr-2"></i>线上营销策略</h5>
-                                    <ul class="text-green-700 space-y-1">
-                                        <li>• 内容营销：专业养宠知识、产品使用体验</li>
-                                        <li>• KOL合作：宠物博主、达人推荐</li>
-                                        <li>• 直播带货：品牌自播+达人合作直播</li>
-                                        <li>• 社群运营：用户互动、口碑传播</li></ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">后期：线下IP打造与体验升级</h4>
-                            <div class="space-y-4">
-                                <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
-                                    <h5 class="font-semibold text-purple-800 mb-2 flex items-center">
-                                        <i class="fa fa-map-marker text-purple-500 mr-2"></i>线下场景布局</h5>
-                                    <ul class="text-purple-700 space-y-1">
-                                        <li>• 品牌体验店：产品展示、用户体验、互动活动</li>
-                                        <li>• 宠物生活馆：宠物美容、宠物寄养、宠物训练</li>
-                                        <li>• 主题快闪店：品牌推广、用户互动、IP营销</li>
-                                        <li>• 合作门店：宠物店、宠物医院、宠物乐园</li></ul>
-                                </div>
-                                <div class="bg-orange-50 p-4 rounded-lg border border-orange-100">
-                                    <h5 class="font-semibold text-orange-800 mb-2 flex items-center">
-                                        <i class="fa fa-star text-orange-500 mr-2"></i>IP打造策略</h5>
-                                    <ul class="text-orange-700 space-y-1">
-                                        <li>• 品牌IP形象：可爱、专业、可信赖的品牌形象</li>
-                                        <li>• 主题活动：宠物比赛、宠物嘉年华、亲子活动</li>
-                                        <li>• 周边产品：品牌周边、文创产品、纪念品</li>
-                                        <li>• 跨界合作：与其他品牌、IP合作，扩大影响力</li></ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="mt-8 bg-primary/5 p-6 rounded-lg border border-primary/20">
-                        <h4 class="text-xl font-semibold text-primary mb-3">发展路径</h4>
-                        <p class="text-gray-700 text-lg">通过线上渠道快速获客，建立品牌认知和用户基础，积累一定的用户群体和品牌影响力后，再通过线下场景打造品牌IP，提供更丰富的用户体验，形成线上线下协同发展的商业模式。</p></div>
-                </div>
-            </div>
-        </section>
-        <!-- 执行计划 -->
-        <section id="execution" class="py-16 bg-white">
-            <div class="container mx-auto px-4">
-                <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">执行路径——MVP法则</h2>
-                <!-- MVP启动策略 -->
-                <div class="bg-gray-50 rounded-xl shadow-sm p-8 mb-12">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">MVP启动：最小可行产品验证循环</h3>
-                    <p class="text-gray-600 text-center text-lg mb-8">不要一上来就全品类铺货，遵循"测试-反馈-放大"的敏捷原则</p>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-                            <div class="text-center mb-4">
-                                <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
-                                    <span class="text-primary text-2xl font-bold">1</span></div>
-                            </div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">MVP 1.0：痛点直击款测试</h4>
-                            <ul class="text-gray-600 space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-primary mt-1 mr-2"></i>
-                                    <span>只上架3-5款核心产品（如1款解决"迷茫"的营养套餐包 + 1款解决"安全"认证的用品 + 1款引流猫砂）</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-primary mt-1 mr-2"></i>
-                                    <span>利用私域、微信群、小红书种草进行小范围测款</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-primary mt-1 mr-2"></i>
-                                    <span>验证"因为信任你，所以买你"的闭环是否跑通</span></li>
-                            </ul>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-                            <div class="text-center mb-4">
-                                <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto">
-                                    <span class="text-secondary text-2xl font-bold">2</span></div>
-                            </div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">MVP 2.0：基于数据迭代</h4>
-                            <ul class="text-gray-600 space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-secondary mt-1 mr-2"></i>
-                                    <span>根据第一批用户反馈，优化产品规格（比如发现大包装不好卖，改成小包装试吃装）</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-secondary mt-1 mr-2"></i>
-                                    <span>优化产品详情页和卖点话术</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-secondary mt-1 mr-2"></i>
-                                    <span>找到真正的"爆款潜质"单品</span></li>
-                            </ul>
-                        </div>
-                        <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
-                            <div class="text-center mb-4">
-                                <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto">
-                                    <span class="text-accent text-2xl font-bold">3</span></div>
-                            </div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">放量阶段</h4>
-                            <ul class="text-gray-600 space-y-2">
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-accent mt-1 mr-2"></i>
-                                    <span>确认爆款后，引入智能设备等高客单价产品</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-accent mt-1 mr-2"></i>
-                                    <span>提升品牌科技感和利润空间</span></li>
-                                <li class="flex items-start">
-                                    <i class="fa fa-check text-accent mt-1 mr-2"></i>
-                                    <span>扩大产品线，建立完整的产品矩阵</span></li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-                <!-- 渠道规划与执行时间轴 -->
-                <div class="bg-white rounded-xl shadow-md p-8 mb-12 border border-gray-100">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
-                        <i class="fa fa-calendar-check-o text-primary mr-3"></i>渠道规划与执行时间轴</h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">渠道规划：加入网易严选</h4>
-                            <div class="space-y-4">
-                                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
-                                    <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
-                                        <i class="fa fa-thumbs-up text-blue-500 mr-2"></i>网易严选优势</h5>
-                                    <ul class="text-blue-700 space-y-1">
-                                        <li>• 品牌信任度高，用户质量好</li>
-                                        <li>• 平台流量大，曝光机会多</li>
-                                        <li>• 运营支持完善，专业团队服务</li>
-                                        <li>• 严格的品控标准，有助于提升品牌形象</li></ul>
-                                </div>
-                                <div class="bg-green-50 p-4 rounded-lg border border-green-100">
-                                    <h5 class="font-semibold text-green-800 mb-2 flex items-center">
-                                        <i class="fa fa-rocket text-green-500 mr-2"></i>入驻策略</h5>
-                                    <ul class="text-green-700 space-y-1">
-                                        <li>• 产品筛选与优化，符合严选标准</li>
-                                        <li>• 打造品牌故事，突出差异化优势</li>
-                                        <li>• 制定营销活动计划，提升产品销量</li>
-                                        <li>• 优化产品页面，提高转化率</li></ul>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">多平台渠道策略</h4>
-                            <div class="space-y-4">
-                                <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
-                                    <h5 class="font-semibold text-purple-800 mb-2 flex items-center">
-                                        <i class="fa fa-amazon text-purple-500 mr-2"></i>亚马逊</h5>
-                                    <p class="text-purple-700">聚焦高客单价、低重量、不易碎的标品，降低物流与售后风险</p></div>
-                                <div class="bg-orange-50 p-4 rounded-lg border border-orange-100">
-                                    <h5 class="font-semibold text-orange-800 mb-2 flex items-center">
-                                        <i class="fa fa-shopping-cart text-orange-500 mr-2"></i>淘宝/京东</h5>
-                                    <p class="text-orange-700">利用用户基础大、基础设施完善的优势，建立品牌旗舰店</p></div>
-                                <div class="bg-red-50 p-4 rounded-lg border border-red-100">
-                                    <h5 class="font-semibold text-red-800 mb-2 flex items-center">
-                                        <i class="fa fa-music text-red-500 mr-2"></i>抖音电商</h5>
-                                    <p class="text-red-700">利用兴趣推荐、流量爆发快的特点，打造爆款产品</p></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="relative">
-                        <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-primary/20"></div>
-                        <div class="space-y-8">
-                            <div class="relative pl-12">
-                                <div class="absolute left-0 top-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold">1</span></div>
-                                <h4 class="text-xl font-semibold text-gray-800">第1个月：市场调研与产品筛选</h4>
-                                <p class="text-gray-600 mt-2">深入调研市场，了解用户需求；筛选出符合要求的产品；联系供应商，确定合作意向</p></div>
-                            <div class="relative pl-12">
-                                <div class="absolute left-0 top-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold">2</span></div>
-                                <h4 class="text-xl font-semibold text-gray-800">第2个月：供应商对接与样品测试</h4>
-                                <p class="text-gray-600 mt-2">与供应商签订合作协议；进行样品测试，确保产品质量；准备相关认证材料</p></div>
-                            <div class="relative pl-12">
-                                <div class="absolute left-0 top-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold">3</span></div>
-                                <h4 class="text-xl font-semibold text-gray-800">第3个月：网易严选入驻申请</h4>
-                                <p class="text-gray-600 mt-2">准备入驻材料；提交入驻申请；与网易严选运营团队沟通</p></div>
-                            <div class="relative pl-12">
-                                <div class="absolute left-0 top-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold">4</span></div>
-                                <h4 class="text-xl font-semibold text-gray-800">第4个月：产品上线与测试</h4>
-                                <p class="text-gray-600 mt-2">在网易严选平台上线产品；进行小范围测试，收集用户反馈；优化产品页面和描述</p></div>
-                            <div class="relative pl-12">
-                                <div class="absolute left-0 top-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold">5</span></div>
-                                <h4 class="text-xl font-semibold text-gray-800">第5个月：营销推广与用户反馈</h4>
-                                <p class="text-gray-600 mt-2">进行营销推广，提升产品曝光；收集用户反馈，优化产品和服务；调整营销策略，提升转化率</p></div>
-                            <div class="relative pl-12">
-                                <div class="absolute left-0 top-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                                    <span class="text-white font-bold">6</span></div>
-                                <h4 class="text-xl font-semibold text-gray-800">第6个月：产品优化与规模扩大</h4>
-                                <p class="text-gray-600 mt-2">根据用户反馈优化产品；扩大产品线，增加更多产品；提升市场份额，实现盈利</p></div>
-                        </div>
-                    </div>
-                </div>
-                <!-- 总结与展望 -->
-                <div class="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl p-8">
-                    <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">总结与展望</h3>
-                    <div class="max-w-4xl mx-auto">
-                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                            <p class="text-gray-700 text-lg font-medium text-center">宠物行业目前最大的风口不是"卖货"，而是 "卖确定性和卖安心" 。我们的0-1策略，前端通过解决用户对"是否有效、是否安全"的迷茫来建立信任（用认证和组合方案），中端利用"重物包邮/配送计划"来引流获客，后端靠"智能监测和数据服务"锁定高净值用户，同时借鉴行业TOP10品牌的成功经验，采用多渠道营销的方式，提升品牌知名度和产品销量。</p></div>
-                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-                            <div class="bg-white rounded-lg shadow-md p-6 text-center">
-                                <h4 class="text-lg font-semibold text-primary mb-2">市场机会</h4>
-                                <p class="text-gray-600">3000亿市场规模，年增长率7.5%</p></div>
-                            <div class="bg-white rounded-lg shadow-md p-6 text-center">
-                                <h4 class="text-lg font-semibold text-secondary mb-2">核心优势</h4>
-                                <p class="text-gray-600">抓住用户痛点，建立品牌信任</p></div>
-                            <div class="bg-white rounded-lg shadow-md p-6 text-center">
-                                <h4 class="text-lg font-semibold text-accent mb-2">长期目标</h4>
-                                <p class="text-gray-600">成为宠物用品行业的标杆品牌</p></div>
-                        </div>
-                        <div class="bg-white rounded-lg shadow-md p-6 mb-6">
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">核心理念</h4>
-                            <p class="text-gray-700 text-lg font-medium text-center">找到方向最重要，先找对方向赚到第一桶金，接着才是根据正确方向进行运营，不然投入再多运营也没用。</p></div>
-                        <div class="bg-white rounded-lg shadow-md p-6">
-                            <h4 class="text-xl font-semibold text-gray-800 mb-4">下一步行动建议</h4>
-                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                <div class="flex items-start">
-                                    <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
-                                    <span>立即启动市场调研和产品筛选</span></div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
-                                    <span>联系网易严选，了解入驻流程</span></div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
-                                    <span>组建核心团队，明确分工</span></div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
-                                    <span>制定详细的执行计划和时间表</span></div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
-                                    <span>准备启动资金</span></div>
-                                <div class="flex items-start">
-                                    <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
-                                    <span>开始MVP产品测试</span></div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="text-center mt-8">
-                        <p class="text-gray-700 text-lg font-medium">抓住宠物经济的黄金机会，让我们一起打造宠物用品行业的标杆品牌！</p>
-                        <div class="mt-4 inline-block">
-                            <i class="fa fa-paw text-primary text-3xl"></i>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-        <!-- 页脚 -->
-        <footer class="bg-gray-800 text-white py-8">
-            <div class="container mx-auto px-4 text-center">
-                <div class="flex justify-center items-center space-x-2 mb-4">
-                    <i class="fa fa-paw text-primary text-2xl"></i>
-                    <span class="text-xl font-bold">宠物用品选品分析报告</span></div>
-                <p class="text-gray-400 mb-4">基于用户痛点的选品策略与盈利模式</p>
-                <div class="flex justify-center space-x-6 text-gray-400">
-                    <span>时间：2026年3月1日</span></div>
-            </div>
-        </footer>
-        <script>// 核心修复：等待整个DOM加载完成后再执行所有代码
-            document.addEventListener('DOMContentLoaded',
-            function() {
-                // 1. 导航栏滚动效果
-                const navbar = document.getElementById('navbar');
-                // 增加判空，避免元素不存在时报错
-                if (navbar) {
-                    window.addEventListener('scroll',
-                    function() {
-                        if (window.scrollY > 50) {
-                            navbar.classList.add('py-2', 'bg-white/95', 'backdrop-blur-sm');
-                            navbar.classList.remove('py-3');
-                        } else {
-                            navbar.classList.add('py-3');
-                            navbar.classList.remove('py-2', 'bg-white/95', 'backdrop-blur-sm');
-                        }
-                    });
-                }
+        </div>
+    </section>
 
-                // 2. 移动端菜单
-                const menuBtn = document.getElementById('menuBtn');
-                const mobileMenu = document.getElementById('mobileMenu');
-                if (menuBtn && mobileMenu) {
-                    menuBtn.addEventListener('click',
-                    function() {
-                        mobileMenu.classList.toggle('hidden');
-                    });
-                }
+    <!-- 执行计划 -->
+    <section id="execution" class="py-16 bg-white">
+        <div class="container mx-auto px-4">
+            <h2 class="text-[clamp(1.5rem,3vw,2.5rem)] font-bold text-center text-gray-800 mb-12">执行路径——MVP法则</h2>
+            
+            <!-- MVP启动策略 -->
+            <div class="bg-gray-50 rounded-xl shadow-sm p-8 mb-12">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">MVP启动：最小可行产品验证循环</h3>
+                <p class="text-gray-600 text-center text-lg mb-8">不要一上来就全品类铺货，遵循"测试-反馈-放大"的敏捷原则</p>
+                
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
+                                <span class="text-primary text-2xl font-bold">1</span>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">MVP 1.0：痛点直击款测试</h4>
+                        <ul class="text-gray-600 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-primary mt-1 mr-2"></i>
+                                <span>只上架3-5款核心产品（如1款解决"迷茫"的营养套餐包 + 1款解决"安全"认证的用品 + 1款引流猫砂）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-primary mt-1 mr-2"></i>
+                                <span>利用私域、微信群、小红书种草进行小范围测款</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-primary mt-1 mr-2"></i>
+                                <span>验证"因为信任你，所以买你"的闭环是否跑通</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-secondary/10 rounded-full flex items-center justify-center mx-auto">
+                                <span class="text-secondary text-2xl font-bold">2</span>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">MVP 2.0：基于数据迭代</h4>
+                        <ul class="text-gray-600 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-secondary mt-1 mr-2"></i>
+                                <span>根据第一批用户反馈，优化产品规格（比如发现大包装不好卖，改成小包装试吃装）</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-secondary mt-1 mr-2"></i>
+                                <span>优化产品详情页和卖点话术</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-secondary mt-1 mr-2"></i>
+                                <span>找到真正的"爆款潜质"单品</span>
+                            </li>
+                        </ul>
+                    </div>
+                    
+                    <div class="bg-white p-6 rounded-lg shadow-md border border-gray-100">
+                        <div class="text-center mb-4">
+                            <div class="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto">
+                                <span class="text-accent text-2xl font-bold">3</span>
+                            </div>
+                        </div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4 text-center">放量阶段</h4>
+                        <ul class="text-gray-600 space-y-2">
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>确认爆款后，引入智能设备等高客单价产品</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>提升品牌科技感和利润空间</span>
+                            </li>
+                            <li class="flex items-start">
+                                <i class="fa fa-check text-accent mt-1 mr-2"></i>
+                                <span>扩大产品线，建立完整的产品矩阵</span>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
 
-                // 3. 平滑滚动
-                document.querySelectorAll('a[href^="#"]').forEach(anchor = >{
-                    anchor.addEventListener('click',
-                    function(e) {
-                        e.preventDefault();
-                        const target = document.querySelector(this.getAttribute('href'));
-                        if (target) {
-                            window.scrollTo({
-                                top: target.offsetTop - 80,
-                                behavior: 'smooth'
-                            });
-                            // 关闭移动端菜单（增加判空）
-                            if (mobileMenu) {
-                                mobileMenu.classList.add('hidden');
-                            }
-                        }
-                    });
+            <!-- 渠道规划与执行时间轴 -->
+            <div class="bg-white rounded-xl shadow-md p-8 mb-12 border border-gray-100">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 flex items-center">
+                    <i class="fa fa-calendar-check-o text-primary mr-3"></i>
+                    渠道规划与执行时间轴
+                </h3>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">渠道规划：加入网易严选</h4>
+                        <div class="space-y-4">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h5 class="font-semibold text-blue-800 mb-2 flex items-center">
+                                    <i class="fa fa-thumbs-up text-blue-500 mr-2"></i>
+                                    网易严选优势
+                                </h5>
+                                <ul class="text-blue-700 space-y-1">
+                                    <li>• 品牌信任度高，用户质量好</li>
+                                    <li>• 平台流量大，曝光机会多</li>
+                                    <li>• 运营支持完善，专业团队服务</li>
+                                    <li>• 严格的品控标准，有助于提升品牌形象</li>
+                                </ul>
+                            </div>
+                            <div class="bg-green-50 p-4 rounded-lg border border-green-100">
+                                <h5 class="font-semibold text-green-800 mb-2 flex items-center">
+                                    <i class="fa fa-rocket text-green-500 mr-2"></i>
+                                    入驻策略
+                                </h5>
+                                <ul class="text-green-700 space-y-1">
+                                    <li>• 产品筛选与优化，符合严选标准</li>
+                                    <li>• 打造品牌故事，突出差异化优势</li>
+                                    <li>• 制定营销活动计划，提升产品销量</li>
+                                    <li>• 优化产品页面，提高转化率</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">多平台渠道策略</h4>
+                        <div class="space-y-4">
+                            <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                                <h5 class="font-semibold text-purple-800 mb-2 flex items-center">
+                                    <i class="fa fa-amazon text-purple-500 mr-2"></i>
+                                    亚马逊
+                                </h5>
+                                <p class="text-purple-700">聚焦高客单价、低重量、不易碎的标品，降低物流与售后风险</p>
+                            </div>
+                            <div class="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                                <h5 class="font-semibold text-orange-800 mb-2 flex items-center">
+                                    <i class="fa fa-shopping-cart text-orange-500 mr-2"></i>
+                                    淘宝/京东
+                                </h5>
+                                <p class="text-orange-700">利用用户基础大、基础设施完善的优势，建立品牌旗舰店</p>
+                            </div>
+                            <div class="bg-red-50 p-4 rounded-lg border border-red-100">
+                                <h5 class="font-semibold text-red-800 mb-2 flex items-center">
+                                    <i class="fa fa-music text-red-500 mr-2"></i>
+                                    抖音电商
+                                </h5>
+                                <p class="text-red-700">利用兴趣推荐、流量爆发快的特点，打造爆款产品</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="relative">
+                    <div class="absolute left-4 top-0 bottom-0 w-0.5 bg-primary/20"></div>
+                    <div class="space-y-8">
+                        <div class="relative pl-12">
+                            <div class="absolute left-0 top-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                <span class="text-white font-bold">1</span>
+                            </div>
+                            <h4 class="text-xl font-semibold text-gray-800">第1个月：市场调研与产品筛选</h4>
+                            <p class="text-gray-600 mt-2">深入调研市场，了解用户需求；筛选出符合要求的产品；联系供应商，确定合作意向</p>
+                        </div>
+                        <div class="relative pl-12">
+                            <div class="absolute left-0 top-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                <span class="text-white font-bold">2</span>
+                            </div>
+                            <h4 class="text-xl font-semibold text-gray-800">第2个月：供应商对接与样品测试</h4>
+                            <p class="text-gray-600 mt-2">与供应商签订合作协议；进行样品测试，确保产品质量；准备相关认证材料</p>
+                        </div>
+                        <div class="relative pl-12">
+                            <div class="absolute left-0 top-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                <span class="text-white font-bold">3</span>
+                            </div>
+                            <h4 class="text-xl font-semibold text-gray-800">第3个月：网易严选入驻申请</h4>
+                            <p class="text-gray-600 mt-2">准备入驻材料；提交入驻申请；与网易严选运营团队沟通</p>
+                        </div>
+                        <div class="relative pl-12">
+                            <div class="absolute left-0 top-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                <span class="text-white font-bold">4</span>
+                            </div>
+                            <h4 class="text-xl font-semibold text-gray-800">第4个月：产品上线与测试</h4>
+                            <p class="text-gray-600 mt-2">在网易严选平台上线产品；进行小范围测试，收集用户反馈；优化产品页面和描述</p>
+                        </div>
+                        <div class="relative pl-12">
+                            <div class="absolute left-0 top-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                <span class="text-white font-bold">5</span>
+                            </div>
+                            <h4 class="text-xl font-semibold text-gray-800">第5个月：营销推广与用户反馈</h4>
+                            <p class="text-gray-600 mt-2">进行营销推广，提升产品曝光；收集用户反馈，优化产品和服务；调整营销策略，提升转化率</p>
+                        </div>
+                        <div class="relative pl-12">
+                            <div class="absolute left-0 top-0 w-8 h-8 bg-primary rounded-full flex items-center justify-center">
+                                <span class="text-white font-bold">6</span>
+                            </div>
+                            <h4 class="text-xl font-semibold text-gray-800">第6个月：产品优化与规模扩大</h4>
+                            <p class="text-gray-600 mt-2">根据用户反馈优化产品；扩大产品线，增加更多产品；提升市场份额，实现盈利</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 总结与展望 -->
+            <div class="bg-gradient-to-br from-primary/5 to-secondary/5 rounded-xl p-8">
+                <h3 class="text-2xl font-semibold text-gray-800 mb-6 text-center">总结与展望</h3>
+                
+                <div class="max-w-4xl mx-auto">
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <p class="text-gray-700 text-lg font-medium text-center">宠物行业目前最大的风口不是"卖货"，而是 "卖确定性和卖安心" 。我们的0-1策略，前端通过解决用户对"是否有效、是否安全"的迷茫来建立信任（用认证和组合方案），中端利用"重物包邮/配送计划"来引流获客，后端靠"智能监测和数据服务"锁定高净值用户，同时借鉴行业TOP10品牌的成功经验，采用多渠道营销的方式，提升品牌知名度和产品销量。</p>
+                    </div>
+                    
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
+                        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                            <h4 class="text-lg font-semibold text-primary mb-2">市场机会</h4>
+                            <p class="text-gray-600">3000亿市场规模，年增长率7.5%</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                            <h4 class="text-lg font-semibold text-secondary mb-2">核心优势</h4>
+                            <p class="text-gray-600">抓住用户痛点，建立品牌信任</p>
+                        </div>
+                        <div class="bg-white rounded-lg shadow-md p-6 text-center">
+                            <h4 class="text-lg font-semibold text-accent mb-2">长期目标</h4>
+                            <p class="text-gray-600">成为宠物用品行业的标杆品牌</p>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">核心理念</h4>
+                        <p class="text-gray-700 text-lg font-medium text-center">找到方向最重要，先找对方向赚到第一桶金，接着才是根据正确方向进行运营，不然投入再多运营也没用。</p>
+                    </div>
+                    
+                    <div class="bg-white rounded-lg shadow-md p-6">
+                        <h4 class="text-xl font-semibold text-gray-800 mb-4">下一步行动建议</h4>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="flex items-start">
+                                <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                                <span>立即启动市场调研和产品筛选</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                                <span>联系网易严选，了解入驻流程</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                                <span>组建核心团队，明确分工</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                                <span>制定详细的执行计划和时间表</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                                <span>准备启动资金</span>
+                            </div>
+                            <div class="flex items-start">
+                                <i class="fa fa-check-circle text-primary mt-1 mr-3"></i>
+                                <span>开始MVP产品测试</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-8">
+                    <p class="text-gray-700 text-lg font-medium">抓住宠物经济的黄金机会，让我们一起打造宠物用品行业的标杆品牌！</p>
+                    <div class="mt-4 inline-block">
+                        <i class="fa fa-paw text-primary text-3xl"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 页脚 -->
+    <footer class="bg-gray-800 text-white py-8">
+        <div class="container mx-auto px-4 text-center">
+            <div class="flex justify-center items-center space-x-2 mb-4">
+                <i class="fa fa-paw text-primary text-2xl"></i>
+                <span class="text-xl font-bold">宠物用品选品分析报告</span>
+            </div>
+            <p class="text-gray-400 mb-4">基于用户痛点的选品策略与盈利模式</p>
+            <div class="flex justify-center space-x-6 text-gray-400">
+                <span>时间：2026年3月1日</span>
+            </div>
+        </div>
+    </footer>
+
+<script>
+// 核心修复：等待整个DOM加载完成后再执行所有代码
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. 导航栏滚动效果
+    const navbar = document.getElementById('navbar');
+    // 增加判空，避免元素不存在时报错
+    if (navbar) {
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 50) {
+                navbar.classList.add('py-2', 'bg-white/95', 'backdrop-blur-sm');
+                navbar.classList.remove('py-3');
+            } else {
+                navbar.classList.add('py-3');
+                navbar.classList.remove('py-2', 'bg-white/95', 'backdrop-blur-sm');
+            }
+        });
+    }
+
+    // 2. 移动端菜单
+    const menuBtn = document.getElementById('menuBtn');
+    const mobileMenu = document.getElementById('mobileMenu');
+    if (menuBtn && mobileMenu) {
+        menuBtn.addEventListener('click', function() {
+            mobileMenu.classList.toggle('hidden');
+        });
+    }
+
+    // 3. 平滑滚动
+    document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+            e.preventDefault();
+            const target = document.querySelector(this.getAttribute('href'));
+            if (target) {
+                window.scrollTo({
+                    top: target.offsetTop - 80,
+                    behavior: 'smooth'
                 });
-
-                // 4. 市场规模图表（修复配置错误）
-                const marketChartEl = document.getElementById('marketChart');
-                if (marketChartEl) { // 判空：确保元素存在
-                    const marketChart = echarts.init(marketChartEl);
-                    const marketOption = {
-                        title: {
-                            text: '宠物市场规模增长趋势',
-                            left: 'center',
-                            textStyle: {
-                                fontSize: 16,
-                                color: '#64748B'
-                            }
-                        },
-                        tooltip: {
-                            trigger: 'axis',
-                            axisPointer: {
-                                type: 'shadow'
-                            }
-                        },
-                        grid: {
-                            left: '3%',
-                            right: '4%',
-                            bottom: '3%',
-                            containLabel: true
-                        },
-                        xAxis: {
-                            type: 'category',
-                            data: ['2021', '2022', '2023', '2024', '2025(预测)', '2028(预测)'],
-                            axisLabel: {
-                                color: '#64748B'
-                            }
-                        },
-                        // 修复：合并yAxis配置，避免重复
-                        yAxis: [{
-                            type: 'value',
-                            name: '市场规模（亿元）',
-                            nameTextStyle: {
-                                color: '#64748B'
-                            },
-                            axisLabel: {
-                                color: '#64748B'
-                            }
-                        },
-                        {
-                            type: 'value',
-                            name: '增长率',
-                            nameTextStyle: {
-                                color: '#64748B'
-                            },
-                            axisLabel: {
-                                color: '#64748B',
-                                formatter: '{value}%' // 显示时加%符号
-                            }
-                        }],
-                        series: [{
-                            name: '市场规模',
-                            type: 'bar',
-                            data: [2490, 2706, 2864, 3002, 3500, 11500],
-                            itemStyle: {
-                                color: '#165DFF'
-                            },
-                            emphasis: {
-                                itemStyle: {
-                                    color: '#36D399'
-                                }
-                            }
-                        },
-                        {
-                            name: '增长率',
-                            type: 'line',
-                            // 修复：将百分比字符串改为数字（18.9% → 18.9）
-                            data: [18.9, 8.7, 5.8, 7.5, 16.6, 228.6],
-                            yAxisIndex: 1,
-                            // 指定使用第二个y轴
-                            itemStyle: {
-                                color: '#F87272'
-                            },
-                            lineStyle: {
-                                color: '#F87272'
-                            }
-                        }]
-                    };
-                    marketChart.setOption(marketOption);
+                // 关闭移动端菜单（增加判空）
+                if (mobileMenu) {
+                    mobileMenu.classList.add('hidden');
                 }
+            }
+        });
+    });
 
-                // 毛利率对比图表
-                const profitMarginChart = echarts.init(document.getElementById('profitChart'));
-                const profitMarginOption = {
-                    title: {
-                        text: '不同品类毛利率对比',
-                        left: 'center',
-                        textStyle: {
-                            fontSize: 16,
-                            fontWeight: 'bold'
+    // 4. 市场规模图表（修复配置错误）
+    const marketChartEl = document.getElementById('marketChart');
+    if (marketChartEl) { // 判空：确保元素存在
+        const marketChart = echarts.init(marketChartEl);
+        const marketOption = {
+            title: {
+                text: '宠物市场规模增长趋势',
+                left: 'center',
+                textStyle: {
+                    fontSize: 16,
+                    color: '#64748B'
+                }
+            },
+            tooltip: {
+                trigger: 'axis',
+                axisPointer: {
+                    type: 'shadow'
+                }
+            },
+            grid: {
+                left: '3%',
+                right: '4%',
+                bottom: '3%',
+                containLabel: true
+            },
+            xAxis: {
+                type: 'category',
+                data: ['2021', '2022', '2023', '2024', '2025(预测)', '2028(预测)'],
+                axisLabel: {
+                    color: '#64748B'
+                }
+            },
+            // 修复：合并yAxis配置，避免重复
+            yAxis: [
+                {
+                    type: 'value',
+                    name: '市场规模（亿元）',
+                    nameTextStyle: {
+                        color: '#64748B'
+                    },
+                    axisLabel: {
+                        color: '#64748B'
+                    }
+                },
+                {
+                    type: 'value',
+                    name: '增长率',
+                    nameTextStyle: {
+                        color: '#64748B'
+                    },
+                    axisLabel: {
+                        color: '#64748B',
+                        formatter: '{value}%' // 显示时加%符号
+                    }
+                }
+            ],
+            series: [
+                {
+                    name: '市场规模',
+                    type: 'bar',
+                    data: [2490, 2706, 2864, 3002, 3500, 11500],
+                    itemStyle: {
+                        color: '#165DFF'
+                    },
+                    emphasis: {
+                        itemStyle: {
+                            color: '#36D399'
                         }
+                    }
+                },
+                {
+                    name: '增长率',
+                    type: 'line',
+                    // 修复：将百分比字符串改为数字（18.9% → 18.9）
+                    data: [18.9, 8.7, 5.8, 7.5, 16.6, 228.6],
+                    yAxisIndex: 1, // 指定使用第二个y轴
+                    itemStyle: {
+                        color: '#F87272'
                     },
-                    tooltip: {
-                        trigger: 'item',
-                        formatter: '{a} <br/>{b}: {c}%'
-                    },
-                    legend: {
-                        orient: 'vertical',
-                        left: 'left',
-                        data: ['智能宠物设备', '高端营养补充品', '专业护理产品', '宠物玩具', '宠物窝垫', '宠物食品']
-                    },
-                    series: [{
+                    lineStyle: {
+                        color: '#F87272'
+                    }
+                }
+            ]
+        };
+        marketChart.setOption(marketOption);
+    }
+
+
+            // 毛利率对比图表
+            const profitMarginChart = echarts.init(document.getElementById('profitChart'));
+            const profitMarginOption = {
+                title: {
+                    text: '不同品类毛利率对比',
+                    left: 'center',
+                    textStyle: {
+                        fontSize: 16,
+                        fontWeight: 'bold'
+                    }
+                },
+                tooltip: {
+                    trigger: 'item',
+                    formatter: '{a} <br/>{b}: {c}%'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left',
+                    data: ['智能宠物设备', '高端营养补充品', '专业护理产品', '宠物玩具', '宠物窝垫', '宠物食品']
+                },
+                series: [
+                    {
                         name: '毛利率',
                         type: 'pie',
                         radius: ['40%', '70%'],
@@ -1409,42 +1743,26 @@
                         labelLine: {
                             show: false
                         },
-                        data: [{
-                            value: 70,
-                            name: '智能宠物设备'
-                        },
-                        {
-                            value: 50,
-                            name: '高端营养补充品'
-                        },
-                        {
-                            value: 40,
-                            name: '专业护理产品'
-                        },
-                        {
-                            value: 23.4,
-                            name: '宠物玩具'
-                        },
-                        {
-                            value: 21.5,
-                            name: '宠物窝垫'
-                        },
-                        {
-                            value: 9.6,
-                            name: '宠物食品'
-                        }],
+                        data: [
+                            { value: 70, name: '智能宠物设备' },
+                            { value: 50, name: '高端营养补充品' },
+                            { value: 40, name: '专业护理产品' },
+                            { value: 23.4, name: '宠物玩具' },
+                            { value: 21.5, name: '宠物窝垫' },
+                            { value: 9.6, name: '宠物食品' }
+                        ],
                         color: ['#165DFF', '#36D399', '#F87272', '#FBBF24', '#8B5CF6', '#F472B6']
-                    }]
-                };
-                profitMarginChart.setOption(profitMarginOption);
+                    }
+                ]
+            };
+            profitMarginChart.setOption(profitMarginOption);
 
-                // 6. 响应式调整（增加判空，避免元素不存在时报错）
-                window.addEventListener('resize',
-                function() {
-                    if (window.marketChart) marketChart.resize();
-                    if (window.profitChart) profitChart.resize();
-                });
-            });</script>
-    </body>
-
+    // 6. 响应式调整（增加判空，避免元素不存在时报错）
+    window.addEventListener('resize', function() {
+        if (window.marketChart) marketChart.resize();
+        if (window.profitChart) profitChart.resize();
+    });
+});
+</script>
+</body>
 </html>
