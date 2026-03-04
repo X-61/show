@@ -1,0 +1,1675 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>家常菜单管理系统</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background-color: #f5f5f5;
+            color: #333;
+            padding-bottom: 50px;
+        }
+
+        /* 顶部导航栏 */
+        header {
+            background-color: #e74c3c;
+            color: white;
+            padding: 15px 20px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+        }
+
+        /* 通用面板样式 */
+        .panel {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+        }
+
+        .panel-title {
+            font-size: 18px;
+            margin-bottom: 15px;
+            color: #e74c3c;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        /* 表单样式 */
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #666;
+        }
+
+        .form-group select, .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 14px;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        /* 按钮样式 */
+        .btn {
+            padding: 10px 20px;
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background-color 0.3s;
+            margin-right: 10px;
+        }
+
+        .btn:hover {
+            background-color: #c0392b;
+        }
+
+        .btn-secondary {
+            background-color: #3498db;
+        }
+
+        .btn-secondary:hover {
+            background-color: #2980b9;
+        }
+
+        .btn-small {
+            padding: 5px 10px;
+            font-size: 12px;
+        }
+
+        .btn-xs {
+            padding: 3px 8px;
+            font-size: 12px;
+        }
+
+        /* 消息提示 */
+        .message {
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        .success {
+            color: #27ae60;
+            background-color: #f8f8f8;
+            border: 1px solid #e6f7ef;
+        }
+
+        .error {
+            color: #e74c3c;
+            background-color: #fef2f2;
+            border: 1px solid #fde8e8;
+        }
+
+        /* 菜品管理区域 */
+        .dish-manager {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .form-panel {
+            flex: 1;
+            min-width: 300px;
+        }
+
+        .list-panel {
+            flex: 1;
+            min-width: 300px;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .dish-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 15px;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #fafafa;
+        }
+
+        .dish-info {
+            flex: 1;
+        }
+
+        .dish-name {
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .dish-category {
+            font-size: 12px;
+            color: #666;
+        }
+
+        /* 快捷按钮组 */
+        .quick-btns {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .quick-btn {
+            padding: 5px 10px;
+            background-color: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .quick-btn:hover {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+
+        /* 筛选区域 */
+        .filter-section {
+            max-width: 1200px;
+            margin: 0 auto 20px;
+            padding: 0 20px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            align-items: center;
+        }
+
+        #search-input {
+            flex: 1;
+            min-width: 250px;
+            padding: 10px 15px;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            outline: none;
+            font-size: 14px;
+        }
+
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .tag {
+            padding: 8px 15px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .tag.active {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+
+        /* 新增：图片模式切换按钮容器 */
+        .image-mode-toggle {
+            max-width: 1200px;
+            margin: 0 auto 15px;
+            padding: 0 20px;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .mode-btn {
+            padding: 6px 12px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .mode-btn.active {
+            background-color: #e74c3c;
+            color: white;
+            border-color: #e74c3c;
+        }
+
+        /* 菜品展示区域 */
+        .menu-grid {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 25px;
+            transition: gap 0.3s ease; /* 新增过渡动画 */
+        }
+
+        /* 缩略图模式下的菜品容器样式 */
+        .menu-grid.thumbnail-mode {
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); /* 缩小最小宽度 */
+            gap: 15px; /* 缩小间距更紧凑 */
+        }
+
+        /* 缩略图模式下的菜品卡片样式 */
+        .menu-grid.thumbnail-mode .menu-card {
+            max-width: 220px; /* 限制最大宽度 */
+        }
+
+        .menu-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+            transition: transform 0.3s;
+            cursor: pointer;
+        }
+
+        .menu-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .menu-card.selected {
+            border: 2px solid #e74c3c;
+        }
+
+        /* 正常图片样式 */
+        .card-img {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            transition: height 0.3s ease;
+        }
+
+        /* 新增：缩略图样式 */
+        .card-img.thumbnail {
+            height: 80px;
+        }
+
+        .card-content {
+            padding: 15px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            margin-bottom: 8px;
+        }
+
+        .ingredient-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+            margin-bottom: 10px;
+        }
+
+        .ingredient-tag {
+            background-color: #f8f8f8;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        /* 菜品描述样式改造 */
+        .card-desc {
+            color: #888;
+            font-size: 13px;
+            line-height: 1.5;
+            position: relative;
+        }
+
+        .desc-content {
+            transition: max-height 0.3s ease;
+        }
+
+        /* 截断样式 */
+        .truncated {
+            max-height: 45px; /* 显示3行 */
+            overflow: hidden;
+        }
+
+        /* 展开样式 */
+        .expanded {
+            max-height: 200px; /* 足够显示长描述 */
+        }
+
+        /* 展开/收缩按钮 */
+        .toggle-desc-btn {
+            color: #e74c3c;
+            font-size: 12px;
+            margin-top: 5px;
+            cursor: pointer;
+            display: inline-block;
+        }
+
+        .toggle-desc-btn:hover {
+            text-decoration: underline;
+        }
+
+        /* 一周配餐区域 */
+        .weekly-menu-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .weekly-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+        }
+
+        .day-card {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #e74c3c;
+        }
+
+        .day-title {
+            font-weight: bold;
+            margin-bottom: 15px;
+            color: #e74c3c;
+        }
+
+        .meal-section {
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .meal-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 8px;
+            color: #3498db;
+        }
+
+        .dish-item-week {
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        /* 食材匹配区域 */
+        .ingredient-chips {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin: 15px 0;
+        }
+
+        .ingredient-chip {
+            padding: 8px 12px;
+            background-color: #f1f1f1;
+            border-radius: 20px;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .remove-chip {
+            color: #e74c3c;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .matched-dishes {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .matched-card {
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 5px;
+            border: 1px solid #eee;
+        }
+
+        /* 选中统计 */
+        .selection-stats {
+            max-width: 1200px;
+            margin: 10px auto;
+            padding: 15px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* 模态框 */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-content {
+            background-color: white;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            padding: 20px;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .dish-options {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #eee;
+            border-radius: 5px;
+            margin-top: 10px;
+        }
+
+        .dish-option {
+            padding: 10px 15px;
+            border-bottom: 1px solid #f1f1f1;
+            cursor: pointer;
+        }
+
+        .dish-option:hover {
+            background-color: #f8f8f8;
+        }
+
+        .dish-option.selected {
+            background-color: #fef2f2;
+            border-left: 3px solid #e74c3c;
+        }
+
+        /* 数据管理按钮 */
+        .data-actions {
+            max-width: 1200px;
+            margin: 10px auto;
+            padding: 0 20px;
+            text-align: right;
+        }
+
+        /* 空状态 */
+        .empty-state {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 50px 0;
+            color: #999;
+        }
+
+        /* 响应式适配 */
+        @media (max-width: 768px) {
+            .menu-grid, .weekly-grid, .matched-dishes {
+                grid-template-columns: 1fr;
+            }
+            
+            /* 移动端缩略图模式下恢复全屏宽度，保证体验 */
+            .menu-grid.thumbnail-mode {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .menu-grid.thumbnail-mode .menu-card {
+                max-width: 100%;
+            }
+            
+            .filter-section {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .dish-manager {
+                flex-direction: column;
+            }
+            
+            /* 移动端缩略图适配 */
+            .card-img.thumbnail {
+                height: 60px;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <!-- 顶部导航 -->
+    <header>
+        <div class="header-container">
+            <div class="logo">家常菜单管理系统</div>
+            <div><i class="fas fa-bookmark"></i></div>
+        </div>
+    </header>
+
+    <!-- 数据管理按钮（新增导入按钮） -->
+    <div class="data-actions">
+        <button class="btn btn-secondary btn-xs" id="import-btn">
+            <i class="fas fa-upload"></i> 导入数据
+        </button>
+        <input type="file" id="import-file" accept=".json" style="display: none;">
+        <button class="btn btn-secondary btn-xs" id="export-btn">
+            <i class="fas fa-download"></i> 导出数据
+        </button>
+        <button class="btn btn-xs" id="clear-btn">
+            <i class="fas fa-trash"></i> 清空数据
+        </button>
+    </div>
+
+    <!-- 菜品管理面板 -->
+    <section class="panel">
+        <div class="panel-title">
+            <i class="fas fa-utensils"></i> 菜品管理
+        </div>
+        <div class="dish-manager">
+            <!-- 添加菜品表单 -->
+            <div class="form-panel">
+                <form id="add-dish-form">
+                    <div class="form-group">
+                        <label for="dish-name">菜品名称 <span style="color:#e74c3c;">*</span></label>
+                        <input type="text" id="dish-name" placeholder="输入菜品名称，如：宫保鸡丁" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="dish-category">菜品分类 <span style="color:#e74c3c;">*</span></label>
+                        <select id="dish-category" required>
+                            <option value="">请选择分类</option>
+                            <option value="猪肉">猪肉</option>
+                            <option value="牛肉">牛肉</option>
+                            <option value="鸡肉">鸡肉</option>
+                            <option value="鱼肉">鱼肉</option>
+                            <option value="海鲜">海鲜</option>
+                            <option value="腊味">腊味</option>
+                            <option value="蛋类">蛋类</option>
+                            <option value="素菜">素菜</option>
+                            <option value="汤品">汤品</option>
+                            <option value="主食">主食</option>
+                            <option value="小吃">小吃</option>
+                            <option value="甜品">甜品</option>
+                        </select>
+                        <div class="quick-btns" id="category-quick">
+                            <div class="quick-btn" data-val="猪肉">猪肉</div>
+                            <div class="quick-btn" data-val="牛肉">牛肉</div>
+                            <div class="quick-btn" data-val="鸡肉">鸡肉</div>
+                            <div class="quick-btn" data-val="素菜">素菜</div>
+                            <div class="quick-btn" data-val="汤品">汤品</div>
+                            <div class="quick-btn" data-val="主食">主食</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="dish-ingredients">食材（用逗号分隔） <span style="color:#e74c3c;">*</span></label>
+                        <input type="text" id="dish-ingredients" placeholder="例如：四季豆,猪肉,大蒜" required>
+                        <div class="quick-btns" id="ingredient-quick">
+                            <div class="quick-btn" data-val="猪肉">猪肉</div>
+                            <div class="quick-btn" data-val="牛肉">牛肉</div>
+                            <div class="quick-btn" data-val="鸡肉">鸡肉</div>
+                            <div class="quick-btn" data-val="四季豆">四季豆</div>
+                            <div class="quick-btn" data-val="土豆">土豆</div>
+                            <div class="quick-btn" data-val="番茄">番茄</div>
+                            <div class="quick-btn" data-val="鸡蛋">鸡蛋</div>
+                            <div class="quick-btn" data-val="大米">大米</div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="dish-image">图片URL（选填）</label>
+                        <input type="url" id="dish-image" placeholder="输入菜品图片链接（可选）" 
+                               value="https://via.placeholder.com/400x200?text=家常菜品">
+                    </div>
+                    <div class="form-group">
+                        <label for="dish-desc">菜品描述（选填）</label>
+                        <textarea id="dish-desc" placeholder="输入菜品描述（可选）"></textarea>
+                    </div>
+                    <button type="submit" class="btn btn-secondary" id="add-btn">添加菜品</button>
+                    <button type="button" class="btn" id="reset-form-btn">清空表单</button>
+                    <div class="message success" id="add-success">
+                        <i class="fas fa-check-circle"></i> 菜品添加成功！
+                    </div>
+                    <div class="message error" id="add-error">
+                        <i class="fas fa-exclamation-circle"></i> 请填写带*的必填信息！
+                    </div>
+                </form>
+            </div>
+
+            <!-- 菜品列表 -->
+            <div class="list-panel">
+                <div class="panel-title" style="font-size: 16px;">
+                    <i class="fas fa-list"></i> 菜品列表（点击删除）
+                </div>
+                <div id="dish-list">
+                    <!-- 菜品列表动态生成 -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 图片替换面板 -->
+    <section class="panel">
+        <div class="panel-title">
+            <i class="fas fa-images"></i> 菜品图片替换
+        </div>
+        <form id="image-form">
+            <div class="form-group">
+                <label for="dish-select">选择菜品</label>
+                <select id="dish-select" required>
+                    <!-- 菜品选项动态生成 -->
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="new-image">新图片URL</label>
+                <input type="url" id="new-image" placeholder="输入图片链接地址" required>
+            </div>
+            <button type="submit" class="btn">更新图片</button>
+            <div class="message success" id="image-success">
+                <i class="fas fa-check-circle"></i> 图片更新成功！
+            </div>
+        </form>
+    </section>
+
+    <!-- 食材匹配面板 -->
+    <section class="panel">
+        <div class="panel-title">
+            <i class="fas fa-carrot"></i> 食材匹配生成菜单
+        </div>
+        <div class="form-group">
+            <label for="ingredients-input">输入可用食材（用逗号分隔）</label>
+            <input type="text" id="ingredients-input" placeholder="例如：四季豆,猪肉,玉米,牛肉">
+            <button type="button" class="btn btn-secondary" id="match-btn" style="margin-top: 10px;">
+                <i class="fas fa-search"></i> 匹配菜品
+            </button>
+        </div>
+        <div class="ingredient-chips" id="ingredient-chips">
+            <!-- 食材标签动态生成 -->
+        </div>
+        <div class="matched-dishes" id="matched-dishes">
+            <!-- 匹配菜品动态生成 -->
+        </div>
+    </section>
+
+    <!-- 一周配餐面板 -->
+    <section class="panel">
+        <div class="weekly-menu-header">
+            <div class="panel-title">
+                <i class="fas fa-calendar-week"></i> 智能一周配餐（分午晚餐）
+            </div>
+            <div>
+                <select id="day-count" style="padding: 5px; margin-right: 10px;">
+                    <option value="5">5天（周一至周五）</option>
+                    <option value="7" selected>7天（一周）</option>
+                </select>
+                <button class="btn btn-secondary" id="generate-weekly-btn">
+                    <i class="fas fa-magic"></i> 生成配餐
+                </button>
+                <button class="btn" id="reset-weekly-btn">
+                    <i class="fas fa-refresh"></i> 重置配餐
+                </button>
+            </div>
+        </div>
+        <div class="weekly-grid" id="weekly-container">
+            <div class="empty-state">
+                <i class="fas fa-calendar-alt" style="font-size: 50px; margin-bottom: 15px;"></i>
+                <p>点击上方按钮生成一周配餐</p>
+            </div>
+        </div>
+        <div class="message success" id="nutrition-tips" style="display:none; margin-top:20px;">
+            <i class="fas fa-lightbulb"></i>
+            <strong>营养小贴士：</strong>
+            <span id="tips-text">合理搭配肉类和素菜，保证营养均衡，建议每天摄入不同种类的蛋白质和蔬菜。</span>
+        </div>
+    </section>
+
+    <!-- 筛选区域 -->
+    <section class="filter-section">
+        <input type="text" id="search-input" placeholder="搜索菜品或食材...">
+        <div class="filter-tags">
+            <div class="tag active" data-filter="all">全部</div>
+            <div class="tag" data-filter="猪肉">猪肉</div>
+            <div class="tag" data-filter="牛肉">牛肉</div>
+            <div class="tag" data-filter="鸡肉">鸡肉</div>
+            <div class="tag" data-filter="鱼肉">鱼肉</div>
+            <div class="tag" data-filter="海鲜">海鲜</div>
+            <div class="tag" data-filter="腊味">腊味</div>
+            <div class="tag" data-filter="蛋类">蛋类</div>
+            <div class="tag" data-filter="素菜">素菜</div>
+            <div class="tag" data-filter="汤品">汤品</div>
+            <div class="tag" data-filter="主食">主食</div>
+            <div class="tag" data-filter="小吃">小吃</div>
+            <div class="tag" data-filter="甜品">甜品</div>
+        </div>
+    </section>
+
+    <!-- 新增：图片显示模式切换 -->
+    <section class="image-mode-toggle">
+        <span>图片显示模式：</span>
+        <button class="mode-btn active" id="normal-img-btn">正常图</button>
+        <button class="mode-btn" id="thumbnail-img-btn">缩略图</button>
+    </section>
+
+    <!-- 选中统计 -->
+    <section class="selection-stats">
+        <div>
+            <span>已选中 <span id="selected-count">0</span> 道菜品 |</span>
+            <span>荤菜 <span id="meat-count">0</span> 道 |</span>
+            <span>素菜 <span id="veg-count">0</span> 道 |</span>
+            <span>主食 <span id="staple-count">0</span> 道 |</span>
+            <span>汤品 <span id="soup-count">0</span> 道</span>
+        </div>
+        <div>
+            <button class="btn btn-secondary btn-small" id="clear-selection">清空选中</button>
+            <button class="btn btn-small" id="distribute-btn">分配选中菜品</button>
+        </div>
+    </section>
+
+    <!-- 菜品展示区域 -->
+    <section class="menu-grid" id="menu-container">
+        <!-- 菜品卡片动态生成 -->
+    </section>
+
+    <!-- 替换菜品模态框 -->
+    <div class="modal" id="replace-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="panel-title" style="margin:0;">选择替换的菜品</h3>
+                <button class="close-modal" id="close-modal">&times;</button>
+            </div>
+            <div>
+                <p>当前菜品：<span id="current-dish" style="color:#e74c3c;">-</span></p>
+                <div class="dish-options" id="dish-options">
+                    <!-- 菜品选项动态生成 -->
+                </div>
+            </div>
+            <div style="margin-top:20px; text-align:right;">
+                <button class="btn btn-secondary" id="confirm-replace">确认替换</button>
+                <button class="btn" id="cancel-replace">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局配置
+        const STORAGE_KEY = 'homeMenuData';
+        const DEFAULT_IMAGE = 'https://via.placeholder.com/400x200?text=家常菜品';
+        const DEFAULT_DESC = '暂无菜品描述';
+        const DESC_TRUNCATE_LENGTH = 50; // 描述截断长度
+        let isThumbnailMode = false; // 图片模式：false=正常图，true=缩略图
+        
+        // 全局数据
+        let menuData = [];
+        let weeklyMenu = [];
+        let selectedDishes = new Set();
+        let replaceContext = { day: -1, meal: '', index: -1 };
+        
+        // 一周天数配置
+        const weekDays = ['星期一', '星期二', '星期三', '星期四', '星期五', '星期六', '星期日'];
+        const nutritionTips = [
+            "合理搭配肉类和素菜，保证营养均衡，建议每天摄入不同种类的蛋白质和蔬菜。",
+            "猪肉富含优质蛋白质和铁元素，适合搭配蔬菜食用，促进营养吸收。",
+            "牛肉含有丰富的锌和维生素B族，每周食用2-3次有助于增强体质。",
+            "腊味虽然美味，但钠含量较高，建议搭配清淡素菜平衡口味。",
+            "荷兰豆和四季豆富含膳食纤维，能促进肠道蠕动，建议每天都有蔬菜摄入。",
+            "玉米富含膳食纤维和维生素，作为主食替代部分精米白面更健康。",
+            "一周配餐注重多样化，避免连续食用相同食材，保证营养全面。",
+            "午餐建议营养丰富一些，晚餐以清淡易消化为主，更符合健康饮食原则。"
+        ];
+
+        // 默认菜品数据（增加长描述测试）
+        const defaultData = [
+            { id: 1, name: "四季豆炒肉", category: "猪肉", ingredients: ["四季豆", "猪肉", "大蒜"], 
+              description: "经典家常菜，四季豆脆嫩，猪肉鲜香。这道菜的关键是四季豆要先焯水，这样炒出来的四季豆既熟透又保持脆嫩口感，猪肉选择五花肉会更香，煸炒出油脂后加入四季豆翻炒，最后加少许生抽和盐调味即可。", image: DEFAULT_IMAGE },
+            { id: 2, name: "玉米炒牛肉", category: "牛肉", ingredients: ["玉米", "牛肉", "胡萝卜"], 
+              description: "甜脆的玉米搭配嫩滑的牛肉，营养丰富。牛肉要逆纹切薄片，用生抽、淀粉、食用油腌制10分钟，这样炒出来的牛肉不会柴，玉米选择水果玉米口感更甜，胡萝卜切小丁增加色彩和营养。", image: DEFAULT_IMAGE },
+            { id: 3, name: "腊肉荷兰豆", category: "腊味", ingredients: ["荷兰豆", "腊肉", "大蒜"], 
+              description: "荷兰豆爽脆，腊肉咸香，下饭神器", image: DEFAULT_IMAGE },
+            { id: 4, name: "腊肠蒸饭", category: "主食", ingredients: ["腊肠", "大米", "青菜"], 
+              description: "广式经典，腊肠的油脂渗入米饭，香气四溢", image: DEFAULT_IMAGE },
+            { id: 5, name: "清炒荷兰豆", category: "素菜", ingredients: ["荷兰豆", "大蒜"], 
+              description: "简单快手的素菜，保留荷兰豆的原汁原味", image: DEFAULT_IMAGE },
+            { id: 6, name: "番茄炒蛋", category: "蛋类", ingredients: ["番茄", "鸡蛋", "糖"], 
+              description: "国民家常菜，酸甜可口，营养丰富。炒鸡蛋时油要多一点，火要大，这样鸡蛋才会蓬松，番茄要炒出汁水，加少许糖中和酸味，最后淋入鸡蛋翻炒均匀即可。", image: DEFAULT_IMAGE },
+            { id: 7, name: "鸡汤", category: "汤品", ingredients: ["鸡肉", "姜片", "红枣"], 
+              description: "滋补鸡汤，味道鲜美，暖身养胃", image: DEFAULT_IMAGE },
+            { id: 8, name: "红烧鱼", category: "鱼肉", ingredients: ["草鱼", "姜", "葱"], 
+              description: "鱼肉鲜嫩，酱汁浓郁，下饭神器", image: DEFAULT_IMAGE }
+        ];
+
+        // 页面加载初始化
+        document.addEventListener('DOMContentLoaded', function() {
+            loadData();
+            initUI();
+            bindAllEvents();
+            // 绑定图片模式切换事件
+            bindImageModeEvents();
+        });
+
+        // ========== 数据操作 ==========
+        function loadData() {
+            try {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                menuData = saved ? JSON.parse(saved) : [...defaultData];
+            } catch (e) {
+                console.error('加载数据失败:', e);
+                menuData = [...defaultData];
+            }
+        }
+
+        function saveData() {
+            try {
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(menuData));
+            } catch (e) {
+                console.error('保存数据失败:', e);
+                alert('数据保存失败，请检查本地存储权限！');
+            }
+        }
+
+        // 导入数据功能
+        function importData(file) {
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    // 验证数据格式：必须是数组
+                    if (!Array.isArray(importedData)) {
+                        throw new Error('导入数据格式错误，必须是数组类型！');
+                    }
+                    
+                    // 验证每个菜品的必填字段（id、name、category、ingredients）
+                    const validData = importedData.filter(dish => {
+                        const isValid = dish.id && dish.name && dish.category && Array.isArray(dish.ingredients);
+                        if (!isValid) {
+                            console.warn('跳过无效菜品数据：', dish);
+                        }
+                        return isValid;
+                    });
+                    
+                    if (validData.length === 0) {
+                        alert('未找到有效菜品数据，请检查文件格式！');
+                        return;
+                    }
+                    
+                    // 询问用户：覆盖现有数据 或 合并数据
+                    const isOverwrite = confirm(
+                        `找到 ${validData.length} 道有效菜品，是否覆盖现有数据？\n取消则合并（重复ID会替换）`
+                    );
+                    
+                    if (isOverwrite) {
+                        menuData = validData; // 覆盖
+                    } else {
+                        // 合并：重复ID替换，新ID添加
+                        const existingIds = new Set(menuData.map(d => d.id));
+                        validData.forEach(newDish => {
+                            if (existingIds.has(newDish.id)) {
+                                const idx = menuData.findIndex(d => d.id === newDish.id);
+                                menuData[idx] = newDish;
+                            } else {
+                                menuData.push(newDish);
+                            }
+                        });
+                    }
+                    
+                    // 保存并刷新界面
+                    saveData();
+                    refreshAllUI();
+                    alert(`成功导入 ${validData.length} 道菜品！`);
+                    
+                } catch (e) {
+                    console.error('导入数据失败：', e);
+                    alert(`导入失败：${e.message}（请确保文件是有效的JSON格式）`);
+                }
+            };
+            
+            reader.readAsText(file);
+        }
+
+        function exportData() {
+            const blob = new Blob([JSON.stringify(menuData, null, 2)], { type: 'application/json' });
+            const a = document.createElement('a');
+            a.href = URL.createObjectURL(blob);
+            a.download = `家常菜单_${new Date().toLocaleDateString().replace(/\//g, '-')}.json`;
+            a.click();
+            URL.revokeObjectURL(a.href);
+            alert('数据导出成功！');
+        }
+
+        function clearData() {
+            if (confirm('确定清空所有数据？此操作不可恢复！')) {
+                localStorage.removeItem(STORAGE_KEY);
+                menuData = [...defaultData];
+                saveData();
+                refreshAllUI();
+                alert('数据已清空，恢复默认菜品！');
+            }
+        }
+
+        // ========== UI渲染 ==========
+        function initUI() {
+            renderMenuList();
+            renderDishSelect();
+            renderDishManagementList();
+            updateSelectionStats();
+        }
+
+        function refreshAllUI() {
+            renderMenuList();
+            renderDishSelect();
+            renderDishManagementList();
+            updateSelectionStats();
+        }
+
+        // 渲染菜品展示列表（改造：支持图片模式和描述展开）
+        function renderMenuList(filteredData = null) {
+            const container = document.getElementById('menu-container');
+            const data = filteredData || menuData;
+            container.innerHTML = '';
+
+            if (data.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-utensils" style="font-size: 50px; margin-bottom: 15px;"></i>
+                        <p>未找到相关菜品</p>
+                    </div>
+                `;
+                return;
+            }
+
+            data.forEach(dish => {
+                const card = document.createElement('div');
+                card.className = `menu-card ${selectedDishes.has(dish.id) ? 'selected' : ''}`;
+                card.dataset.id = dish.id;
+                
+                // 判断描述长度是否需要截断
+                const desc = dish.description || DEFAULT_DESC;
+                const isLongDesc = desc.length > DESC_TRUNCATE_LENGTH;
+                const truncatedDesc = isLongDesc ? desc.substring(0, DESC_TRUNCATE_LENGTH) + '...' : desc;
+                
+                // 菜品卡片HTML（新增图片模式和描述展开逻辑）
+                card.innerHTML = `
+                    <img src="${dish.image || DEFAULT_IMAGE}" alt="${dish.name}" class="card-img ${isThumbnailMode ? 'thumbnail' : ''}">
+                    <div class="card-content">
+                        <h3 class="card-title">${dish.name}</h3>
+                        <div class="ingredient-tags">
+                            ${dish.ingredients.map(ing => `<span class="ingredient-tag">${ing}</span>`).join('')}
+                        </div>
+                        <div class="card-desc">
+                            <div class="desc-content ${isLongDesc ? 'truncated' : ''}" data-full="${desc}">
+                                ${isLongDesc ? truncatedDesc : desc}
+                            </div>
+                            ${isLongDesc ? '<span class="toggle-desc-btn">展开</span>' : ''}
+                        </div>
+                    </div>
+                `;
+
+                // 菜品选中/取消事件
+                card.addEventListener('click', function(e) {
+                    // 点击展开/收缩按钮时不触发选中
+                    if (!e.target.classList.contains('toggle-desc-btn')) {
+                        const id = parseInt(this.dataset.id);
+                        if (selectedDishes.has(id)) {
+                            selectedDishes.delete(id);
+                            this.classList.remove('selected');
+                        } else {
+                            selectedDishes.add(id);
+                            this.classList.add('selected');
+                        }
+                        updateSelectionStats();
+                    }
+                });
+
+                // 绑定描述展开/收缩事件
+                const toggleBtn = card.querySelector('.toggle-desc-btn');
+                if (toggleBtn) {
+                    toggleBtn.addEventListener('click', function() {
+                        const descContent = this.previousElementSibling;
+                        const isTruncated = descContent.classList.contains('truncated');
+                        
+                        if (isTruncated) {
+                            // 展开描述
+                            descContent.classList.remove('truncated');
+                            descContent.classList.add('expanded');
+                            descContent.textContent = descContent.dataset.full;
+                            this.textContent = '收缩';
+                        } else {
+                            // 收缩描述
+                            descContent.classList.remove('expanded');
+                            descContent.classList.add('truncated');
+                            descContent.textContent = truncatedDesc;
+                            this.textContent = '展开';
+                        }
+                    });
+                }
+
+                container.appendChild(card);
+            });
+        }
+
+        // 渲染菜品下拉选择框
+        function renderDishSelect() {
+            const select = document.getElementById('dish-select');
+            select.innerHTML = '<option value="">请选择菜品</option>';
+            
+            menuData.forEach(dish => {
+                const option = document.createElement('option');
+                option.value = dish.id;
+                option.textContent = dish.name;
+                select.appendChild(option);
+            });
+        }
+
+        // 渲染菜品管理列表
+        function renderDishManagementList() {
+            const container = document.getElementById('dish-list');
+            container.innerHTML = '';
+            
+            if (menuData.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">暂无菜品</p>';
+                return;
+            }
+
+            menuData.forEach(dish => {
+                const item = document.createElement('div');
+                item.className = 'dish-item';
+                item.innerHTML = `
+                    <div class="dish-info">
+                        <div class="dish-name">${dish.name}</div>
+                        <div class="dish-category">分类：${dish.category}</div>
+                    </div>
+                    <button class="btn btn-small delete-dish-btn" data-id="${dish.id}">删除</button>
+                `;
+                container.appendChild(item);
+            });
+
+            // 绑定删除按钮事件
+            document.querySelectorAll('.delete-dish-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    if (confirm(`确定删除【${menuData.find(d => d.id === id)?.name}】吗？`)) {
+                        // 移除选中状态
+                        if (selectedDishes.has(id)) {
+                            selectedDishes.delete(id);
+                            updateSelectionStats();
+                        }
+                        // 删除菜品
+                        menuData = menuData.filter(d => d.id !== id);
+                        saveData();
+                        refreshAllUI();
+                    }
+                });
+            });
+        }
+
+        // 渲染一周配餐
+        function renderWeeklyMenu() {
+            const container = document.getElementById('weekly-container');
+            container.innerHTML = '';
+
+            if (weeklyMenu.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <i class="fas fa-calendar-alt" style="font-size: 50px; margin-bottom: 15px;"></i>
+                        <p>点击上方按钮生成一周配餐</p>
+                    </div>
+                `;
+                return;
+            }
+
+            weeklyMenu.forEach((day, dayIdx) => {
+                const card = document.createElement('div');
+                card.className = 'day-card';
+                
+                // 生成午餐HTML
+                const lunchHtml = day.lunch.map((dish, idx) => `
+                    <div class="dish-item-week" data-day="${dayIdx}" data-meal="lunch" data-index="${idx}">
+                        <span>${dish.name} (${dish.category})</span>
+                        <div>
+                            <button class="btn btn-small btn-secondary replace-btn">替换</button>
+                            <button class="btn btn-small delete-week-btn">删除</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                // 生成晚餐HTML
+                const dinnerHtml = day.dinner.map((dish, idx) => `
+                    <div class="dish-item-week" data-day="${dayIdx}" data-meal="dinner" data-index="${idx}">
+                        <span>${dish.name} (${dish.category})</span>
+                        <div>
+                            <button class="btn btn-small btn-secondary replace-btn">替换</button>
+                            <button class="btn btn-small delete-week-btn">删除</button>
+                        </div>
+                    </div>
+                `).join('');
+
+                card.innerHTML = `
+                    <div class="day-title">${day.name}</div>
+                    <div class="meal-section">
+                        <div class="meal-title"><i class="fas fa-sun"></i> 午餐</div>
+                        <div>${lunchHtml || '<p style="color:#999;">暂无菜品</p>'}</div>
+                    </div>
+                    <div class="meal-section">
+                        <div class="meal-title"><i class="fas fa-moon"></i> 晚餐</div>
+                        <div>${dinnerHtml || '<p style="color:#999;">暂无菜品</p>'}</div>
+                    </div>
+                `;
+
+                container.appendChild(card);
+            });
+
+            // 绑定配餐操作事件
+            bindWeeklyMenuEvents();
+        }
+
+        // 渲染食材标签
+        function renderIngredientChips() {
+            const container = document.getElementById('ingredient-chips');
+            container.innerHTML = '';
+            
+            const ingredients = document.getElementById('ingredients-input').value.trim()
+                .split(',').map(i => i.trim()).filter(i => i);
+            
+            ingredients.forEach((ing, idx) => {
+                const chip = document.createElement('div');
+                chip.className = 'ingredient-chip';
+                chip.innerHTML = `${ing} <span class="remove-chip" data-idx="${idx}">×</span>`;
+                container.appendChild(chip);
+            });
+
+            // 绑定移除标签事件
+            document.querySelectorAll('.remove-chip').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const idx = parseInt(this.dataset.idx);
+                    let ings = document.getElementById('ingredients-input').value.trim()
+                        .split(',').map(i => i.trim()).filter(i => i);
+                    ings.splice(idx, 1);
+                    document.getElementById('ingredients-input').value = ings.join(',');
+                    renderIngredientChips();
+                });
+            });
+        }
+
+        // 渲染匹配的菜品
+        function renderMatchedDishes(dishes) {
+            const container = document.getElementById('matched-dishes');
+            container.innerHTML = '';
+
+            if (dishes.length === 0) {
+                container.innerHTML = '<p style="text-align:center; color:#999; padding:20px;">未找到匹配的菜品</p>';
+                return;
+            }
+
+            dishes.forEach(dish => {
+                const card = document.createElement('div');
+                card.className = 'matched-card';
+                card.innerHTML = `
+                    <h4 style="margin-bottom:8px; color:#e74c3c;">${dish.name}</h4>
+                    <p style="font-size:13px; color:#666;">分类：${dish.category}</p>
+                    <p style="font-size:13px; color:#666;">食材：${dish.ingredients.join(', ')}</p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // 渲染替换菜品模态框
+        function renderReplaceModal(currentDish) {
+            document.getElementById('current-dish').textContent = currentDish.name;
+            const optionsContainer = document.getElementById('dish-options');
+            optionsContainer.innerHTML = '';
+
+            // 过滤掉当前菜品
+            const available = menuData.filter(d => d.id !== currentDish.id);
+            
+            if (available.length === 0) {
+                optionsContainer.innerHTML = '<p style="padding:15px; text-align:center; color:#999;">暂无其他菜品</p>';
+                return;
+            }
+
+            available.forEach(dish => {
+                const option = document.createElement('div');
+                option.className = 'dish-option';
+                option.dataset.id = dish.id;
+                option.textContent = `${dish.name} (${dish.category})`;
+                
+                // 选中事件
+                option.addEventListener('click', function() {
+                    document.querySelectorAll('.dish-option').forEach(opt => opt.classList.remove('selected'));
+                    this.classList.add('selected');
+                });
+
+                optionsContainer.appendChild(option);
+            });
+
+            // 显示模态框
+            document.getElementById('replace-modal').style.display = 'flex';
+        }
+
+        // 更新选中菜品统计
+        function updateSelectionStats() {
+            let meat = 0, veg = 0, staple = 0, soup = 0;
+            
+            selectedDishes.forEach(id => {
+                const dish = menuData.find(d => d.id === id);
+                if (!dish) return;
+                
+                if (['猪肉', '牛肉', '鸡肉', '鱼肉', '海鲜', '腊味'].includes(dish.category)) meat++;
+                else if (dish.category === '素菜') veg++;
+                else if (dish.category === '主食') staple++;
+                else if (dish.category === '汤品') soup++;
+            });
+
+            document.getElementById('selected-count').textContent = selectedDishes.size;
+            document.getElementById('meat-count').textContent = meat;
+            document.getElementById('veg-count').textContent = veg;
+            document.getElementById('staple-count').textContent = staple;
+            document.getElementById('soup-count').textContent = soup;
+        }
+
+        // ========== 事件绑定 ==========
+        function bindAllEvents() {
+            // 导入数据按钮事件
+            document.getElementById('import-btn').addEventListener('click', function() {
+                document.getElementById('import-file').click();
+            });
+            // 文件选择事件
+            document.getElementById('import-file').addEventListener('change', function(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                
+                // 校验文件类型（仅允许JSON）
+                if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
+                    alert('请选择JSON格式的文件！');
+                    this.value = ''; // 清空选择，避免重复导入
+                    return;
+                }
+                
+                importData(file);
+                this.value = ''; // 清空选择，方便再次导入
+            });
+
+            // 数据管理按钮（原有）
+            document.getElementById('export-btn').addEventListener('click', exportData);
+            document.getElementById('clear-btn').addEventListener('click', clearData);
+
+            // 筛选标签事件
+            document.querySelectorAll('.tag').forEach(tag => {
+                tag.addEventListener('click', function() {
+                    document.querySelectorAll('.tag').forEach(t => t.classList.remove('active'));
+                    this.classList.add('active');
+                    
+                    const filter = this.dataset.filter;
+                    const filtered = filter === 'all' ? menuData : menuData.filter(d => d.category === filter);
+                    renderMenuList(filtered);
+                });
+            });
+
+            // 搜索功能（防抖）
+            let searchTimer;
+            document.getElementById('search-input').addEventListener('input', function() {
+                clearTimeout(searchTimer);
+                searchTimer = setTimeout(() => {
+                    const keyword = this.value.trim().toLowerCase();
+                    if (!keyword) {
+                        const activeFilter = document.querySelector('.tag.active').dataset.filter;
+                        const filtered = activeFilter === 'all' ? menuData : menuData.filter(d => d.category === activeFilter);
+                        renderMenuList(filtered);
+                        return;
+                    }
+                    
+                    const filtered = menuData.filter(d => 
+                        d.name.toLowerCase().includes(keyword) || 
+                        d.ingredients.some(i => i.toLowerCase().includes(keyword))
+                    );
+                    renderMenuList(filtered);
+                }, 300);
+            });
+
+            // 添加菜品表单
+            document.getElementById('add-dish-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const name = document.getElementById('dish-name').value.trim();
+                const category = document.getElementById('dish-category').value;
+                const ingredientsStr = document.getElementById('dish-ingredients').value.trim();
+                const image = document.getElementById('dish-image').value.trim() || DEFAULT_IMAGE;
+                const desc = document.getElementById('dish-desc').value.trim() || DEFAULT_DESC;
+
+                if (!name || !category || !ingredientsStr) {
+                    showMessage('add-error', 3000);
+                    return;
+                }
+
+                const ingredients = ingredientsStr.split(',').map(i => i.trim()).filter(i => i);
+                const newId = menuData.length ? Math.max(...menuData.map(d => d.id)) + 1 : 1;
+                
+                menuData.push({ id: newId, name, category, ingredients, description: desc, image });
+                saveData();
+                refreshAllUI();
+                
+                // 重置表单
+                this.reset();
+                document.getElementById('dish-image').value = DEFAULT_IMAGE;
+                document.getElementById('dish-name').focus();
+                
+                showMessage('add-success', 3000);
+            });
+
+            // 清空表单按钮
+            document.getElementById('reset-form-btn').addEventListener('click', function() {
+                document.getElementById('add-dish-form').reset();
+                document.getElementById('dish-image').value = DEFAULT_IMAGE;
+            });
+
+            // 快捷分类按钮
+            document.querySelectorAll('#category-quick .quick-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.getElementById('dish-category').value = this.dataset.val;
+                });
+            });
+
+            // 快捷食材按钮
+            document.querySelectorAll('#ingredient-quick .quick-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const input = document.getElementById('dish-ingredients');
+                    const val = this.dataset.val;
+                    input.value = input.value ? `${input.value},${val}` : val;
+                });
+            });
+
+            // 图片更新表单
+            document.getElementById('image-form').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const dishId = parseInt(document.getElementById('dish-select').value);
+                const imageUrl = document.getElementById('new-image').value.trim();
+                
+                if (!dishId || !imageUrl) {
+                    alert('请选择菜品并输入有效的图片URL！');
+                    return;
+                }
+                
+                const idx = menuData.findIndex(d => d.id === dishId);
+                if (idx !== -1) {
+                    menuData[idx].image = imageUrl;
+                    saveData();
+                    renderMenuList();
+                    showMessage('image-success', 3000);
+                    document.getElementById('new-image').value = '';
+                }
+            });
+
+            // 食材匹配按钮
+            document.getElementById('match-btn').addEventListener('click', function() {
+                renderIngredientChips();
+                
+                const ingredients = document.getElementById('ingredients-input').value.trim()
+                    .split(',').map(i => i.trim()).filter(i => i);
+                
+                if (ingredients.length === 0) {
+                    alert('请输入要匹配的食材！');
+                    return;
+                }
+
+                // 匹配包含任意食材的菜品
+                const matched = menuData.filter(dish => 
+                    dish.ingredients.some(ing => ingredients.includes(ing))
+                );
+                
+                renderMatchedDishes(matched);
+            });
+
+            // 生成一周配餐
+            document.getElementById('generate-weekly-btn').addEventListener('click', function() {
+                const daysCount = parseInt(document.getElementById('day-count').value);
+                weeklyMenu = [];
+                
+                // 生成指定天数的配餐
+                for (let i = 0; i < daysCount; i++) {
+                    // 午餐：荤菜+主食
+                    const lunch = getRandomDishes(2, ['猪肉', '牛肉', '鸡肉', '主食', '腊味']);
+                    // 晚餐：素菜+汤品+蛋类
+                    const dinner = getRandomDishes(2, ['素菜', '汤品', '蛋类', '鱼肉']);
+                    
+                    weeklyMenu.push({
+                        name: weekDays[i],
+                        lunch: lunch,
+                        dinner: dinner
+                    });
+                }
+                
+                renderWeeklyMenu();
+                
+                // 显示随机营养小贴士
+                document.getElementById('tips-text').textContent = nutritionTips[Math.floor(Math.random() * nutritionTips.length)];
+                document.getElementById('nutrition-tips').style.display = 'block';
+            });
+
+            // 重置一周配餐
+            document.getElementById('reset-weekly-btn').addEventListener('click', function() {
+                weeklyMenu = [];
+                renderWeeklyMenu();
+                document.getElementById('nutrition-tips').style.display = 'none';
+            });
+
+            // 清空选中菜品
+            document.getElementById('clear-selection').addEventListener('click', function() {
+                selectedDishes.clear();
+                renderMenuList();
+                updateSelectionStats();
+            });
+
+            // 分配选中菜品（简单示例）
+            document.getElementById('distribute-btn').addEventListener('click', function() {
+                if (selectedDishes.size === 0) {
+                    alert('请先选中要分配的菜品！');
+                    return;
+                }
+
+                const selectedDishList = Array.from(selectedDishes).map(id => menuData.find(d => d.id === id)).filter(Boolean);
+                
+                // 简单分配：前半到午餐，后半到晚餐（仅第一天）
+                if (weeklyMenu.length === 0) {
+                    weeklyMenu = [{ name: '星期一', lunch: [], dinner: [] }];
+                }
+                
+                const mid = Math.ceil(selectedDishList.length / 2);
+                weeklyMenu[0].lunch = selectedDishList.slice(0, mid);
+                weeklyMenu[0].dinner = selectedDishList.slice(mid);
+                
+                renderWeeklyMenu();
+                alert('已将选中的菜品分配到第一天的午晚餐！');
+            });
+
+            // 模态框关闭按钮
+            document.getElementById('close-modal').addEventListener('click', closeModal);
+            document.getElementById('cancel-replace').addEventListener('click', closeModal);
+
+            // 确认替换菜品
+            document.getElementById('confirm-replace').addEventListener('click', function() {
+                const selectedOption = document.querySelector('.dish-option.selected');
+                if (!selectedOption) {
+                    alert('请选择要替换的菜品！');
+                    return;
+                }
+
+                const dishId = parseInt(selectedOption.dataset.id);
+                const newDish = menuData.find(d => d.id === dishId);
+                
+                if (newDish && replaceContext.day >= 0) {
+                    weeklyMenu[replaceContext.day][replaceContext.meal][replaceContext.index] = newDish;
+                    renderWeeklyMenu();
+                    closeModal();
+                }
+            });
+        }
+
+        // 新增：绑定图片模式切换事件
+        function bindImageModeEvents() {
+            const normalBtn = document.getElementById('normal-img-btn');
+            const thumbnailBtn = document.getElementById('thumbnail-img-btn');
+            const menuContainer = document.getElementById('menu-container'); // 菜品容器
+            
+            // 正常图模式
+            normalBtn.addEventListener('click', function() {
+                if (!this.classList.contains('active')) {
+                    this.classList.add('active');
+                    thumbnailBtn.classList.remove('active');
+                    isThumbnailMode = false;
+                    // 更新所有菜品图片样式
+                    document.querySelectorAll('.card-img').forEach(img => {
+                        img.classList.remove('thumbnail');
+                    });
+                    // 移除缩略图模式类名，恢复卡片宽度和间距
+                    menuContainer.classList.remove('thumbnail-mode');
+                }
+            });
+            
+            // 缩略图模式
+            thumbnailBtn.addEventListener('click', function() {
+                if (!this.classList.contains('active')) {
+                    this.classList.add('active');
+                    normalBtn.classList.remove('active');
+                    isThumbnailMode = true;
+                    // 更新所有菜品图片样式
+                    document.querySelectorAll('.card-img').forEach(img => {
+                        img.classList.add('thumbnail');
+                    });
+                    // 添加缩略图模式类名，缩小卡片宽度和间距
+                    menuContainer.classList.add('thumbnail-mode');
+                }
+            });
+        }
+
+        // 绑定一周配餐的操作事件
+        function bindWeeklyMenuEvents() {
+            // 替换菜品按钮
+            document.querySelectorAll('.replace-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const item = this.closest('.dish-item-week');
+                    replaceContext = {
+                        day: parseInt(item.dataset.day),
+                        meal: item.dataset.meal,
+                        index: parseInt(item.dataset.index)
+                    };
+                    
+                    const currentDish = weeklyMenu[replaceContext.day][replaceContext.meal][replaceContext.index];
+                    renderReplaceModal(currentDish);
+                });
+            });
+
+            // 删除配餐菜品
+            document.querySelectorAll('.delete-week-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const item = this.closest('.dish-item-week');
+                    const day = parseInt(item.dataset.day);
+                    const meal = item.dataset.meal;
+                    const index = parseInt(item.dataset.index);
+                    
+                    weeklyMenu[day][meal].splice(index, 1);
+                    renderWeeklyMenu();
+                });
+            });
+        }
+
+        // ========== 工具函数 ==========
+        // 获取随机菜品（避免重复）
+        function getRandomDishes(count, categories) {
+            const usedIds = new Set();
+            const result = [];
+            
+            // 筛选指定分类的菜品
+            const candidates = menuData.filter(d => categories.includes(d.category));
+            
+            if (candidates.length === 0) return result;
+            
+            // 随机选择不重复的菜品
+            while (result.length < count && usedIds.size < candidates.length) {
+                const randomIdx = Math.floor(Math.random() * candidates.length);
+                const dish = candidates[randomIdx];
+                
+                if (!usedIds.has(dish.id)) {
+                    usedIds.add(dish.id);
+                    result.push(dish);
+                }
+            }
+            
+            return result;
+        }
+
+        // 显示消息提示
+        function showMessage(id, duration = 3000) {
+            const el = document.getElementById(id);
+            el.style.display = 'block';
+            setTimeout(() => el.style.display = 'none', duration);
+        }
+
+        // 关闭模态框
+        function closeModal() {
+            document.getElementById('replace-modal').style.display = 'none';
+            replaceContext = { day: -1, meal: '', index: -1 };
+        }
+    </script>
+</body>
+</html>
