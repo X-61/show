@@ -1,0 +1,194 @@
+[
+  {
+    "id": 1,
+    "name": "苦瓜炒牛肉",
+    "category": "牛肉",
+    "ingredients": ["苦瓜", "牛肉", "大蒜"],
+    "description": "苦瓜清热降火，牛肉鲜嫩入味，是一道清爽可口的家常小炒。",
+    "image": "https://x-61.github.io/show/menu_jpg/苦瓜炒牛肉.png"
+  },
+  {
+    "id": 2,
+    "name": "冬瓜排骨汤",
+    "category": "汤品",
+    "ingredients": ["冬瓜", "排骨", "姜片"],
+    "description": "冬瓜清热利尿，排骨滋补，汤味清甜，适合夏季饮用。",
+    "image": "https://x-61.github.io/show/menu_jpg/冬瓜排骨汤.png"
+  },
+  {
+    "id": 3,
+    "name": "蒜炒油麦菜",
+    "category": "素菜",
+    "ingredients": ["油麦菜", "大蒜", "盐"],
+    "description": "油麦菜脆嫩，蒜香浓郁，简单快手的清炒素菜。",
+    "image": "https://x-61.github.io/show/menu_jpg/蒜炒油麦菜.png"
+  },
+  {
+    "id": 4,
+    "name": "番茄炒蛋",
+    "category": "蛋类",
+    "ingredients": ["番茄", "鸡蛋", "糖"],
+    "description": "国民家常菜，酸甜可口，营养丰富。炒鸡蛋时油要多一点，火要大，这样鸡蛋才会蓬松，番茄要炒出汁水，加少许糖中和酸味，最后淋入鸡蛋翻炒均匀即可。",
+    "image": "https://x-61.github.io/show/menu_jpg/番茄炒蛋.png"
+  },
+  {
+    "id": 5,
+    "name": "莴笋炒五花肉",
+    "category": "猪肉",
+    "ingredients": ["莴笋", "五花肉", "大蒜"],
+    "description": "莴笋脆嫩爽口，五花肉肥而不腻，是一道下饭的家常小炒。",
+    "image": "https://x-61.github.io/show/menu_jpg/莴笋炒五花肉.png"
+  },
+  {
+    "id": 6,
+    "name": "土豆煎香肠",
+    "category": "腊味",
+    "ingredients": ["土豆", "香肠", "盐"],
+    "description": "土豆软糯，香肠咸香，煎至两面金黄，香气四溢。",
+    "image": "https://x-61.github.io/show/menu_jpg/土豆煎香肠.png"
+  },
+  {
+    "id": 7,
+    "name": "清炒菜心",
+    "category": "素菜",
+    "ingredients": ["菜心", "大蒜", "盐"],
+    "description": "菜心鲜嫩，清炒保留原汁原味，清淡爽口。",
+    "image": "https://x-61.github.io/show/menu_jpg/清炒菜心.png"
+  },
+  {
+    "id": 8,
+    "name": "干煸四季豆",
+    "category": "素菜",
+    "ingredients": ["四季豆", "干辣椒", "大蒜"],
+    "description": "四季豆煸至微焦，麻辣鲜香，是一道经典的川味素菜。",
+    "image": "https://x-61.github.io/show/menu_jpg/干煸四季豆.png"
+  },
+  {
+    "id": 9,
+    "name": "手撕包菜",
+    "category": "素菜",
+    "ingredients": ["包菜", "干辣椒", "大蒜"],
+    "description": "包菜手撕更入味，大火快炒，酸辣开胃。",
+    "image": "https://x-61.github.io/show/menu_jpg/手撕包菜.png"
+  },
+  {
+    "id": 10,
+    "name": "干锅鸡翅薯条",
+    "category": "鸡肉",
+    "ingredients": ["鸡翅", "干辣椒", "大蒜", "土豆"],
+    "description": "鸡翅条外焦里嫩，干锅做法麻辣鲜香，越吃越香。",
+    "image": "https://x-61.github.io/show/menu_jpg/干锅鸡翅薯条.png"
+  },
+  {
+    "id": 11,
+    "name": "干炸排骨",
+    "category": "猪肉",
+    "ingredients": ["排骨", "淀粉", "盐"],
+    "description": "排骨炸至金黄酥脆，外酥里嫩，是一道下酒好菜。",
+    "image": "https://x-61.github.io/show/menu_jpg/干炸排骨.png"
+  },
+  {
+    "id": 12,
+    "name": "包菜炒蛋",
+    "category": "蛋类",
+    "ingredients": ["包菜", "鸡蛋", "盐"],
+    "description": "包菜与鸡蛋同炒，口感丰富，营养均衡。",
+    "image": "https://x-61.github.io/show/menu_jpg/包菜炒蛋.png"
+  },
+  {
+    "id": 13,
+    "name": "胡萝卜炒肉",
+    "category": "猪肉",
+    "ingredients": ["胡萝卜", "猪肉", "大蒜"],
+    "description": "胡萝卜清甜，猪肉鲜香，色泽鲜艳，营养丰富。",
+    "image": "https://x-61.github.io/show/menu_jpg/胡萝卜炒肉.png"
+  },
+  {
+    "id": 14,
+    "name": "红烧鱼",
+    "category": "鱼肉",
+    "ingredients": ["草鱼", "姜", "葱"],
+    "description": "鱼肉鲜嫩，酱汁浓郁，下饭神器。",
+    "image": "https://x-61.github.io/show/menu_jpg/红烧鱼.png"
+  },
+  {
+    "id": 15,
+    "name": "香煎豆腐",
+    "category": "素菜",
+    "ingredients": ["豆腐", "盐", "生抽"],
+    "description": "豆腐煎至两面金黄，外酥里嫩，咸香可口。",
+    "image": "https://x-61.github.io/show/menu_jpg/香煎豆腐.png"
+  },
+  {
+    "id": 16,
+    "name": "肉沫玉米",
+    "category": "猪肉",
+    "ingredients": ["玉米", "猪肉沫", "大蒜"],
+    "description": "玉米清甜，肉沫鲜香，是一道老少皆宜的家常小炒。",
+    "image": "https://x-61.github.io/show/menu_jpg/肉沫玉米.png"
+  },
+  {
+    "id": 17,
+    "name": "牛肉鸡蛋炒饭",
+    "category": "主食",
+    "ingredients": ["米饭", "牛肉", "鸡蛋"],
+    "description": "牛肉与鸡蛋炒饭，香气扑鼻，营养丰富，是一道快手主食。",
+    "image": "https://x-61.github.io/show/menu_jpg/牛肉鸡蛋炒饭.png"
+  },
+  {
+    "id": 18,
+    "name": "牛肉丸白萝卜汤",
+    "category": "汤品",
+    "ingredients": ["牛肉丸", "白萝卜", "姜片"],
+    "description": "牛肉丸Q弹，白萝卜清甜，汤味鲜美，暖身养胃。",
+    "image": "https://x-61.github.io/show/menu_jpg/牛肉丸白萝卜汤.png"
+  },
+  {
+    "id": 19,
+    "name": "四季豆炒肉",
+    "category": "猪肉",
+    "ingredients": ["四季豆", "猪肉", "大蒜"],
+    "description": "经典家常菜，四季豆脆嫩，猪肉鲜香。这道菜的关键是四季豆要先焯水，这样炒出来的四季豆既熟透又保持脆嫩口感，猪肉选择五花肉会更香，煸炒出油脂后加入四季豆翻炒，最后加少许生抽和盐调味即可。",
+    "image": "https://x-61.github.io/show/menu_jpg/四季豆炒肉.png"
+  },
+  {
+    "id": 20,
+    "name": "花菜五花肉",
+    "category": "猪肉",
+    "ingredients": ["花菜", "五花肉", "大蒜"],
+    "description": "花菜吸满肉香，五花肉肥而不腻，是一道下饭的家常小炒。",
+    "image": "https://x-61.github.io/show/menu_jpg/花菜五花肉.png"
+  },
+  {
+    "id": 21,
+    "name": "干锅虾",
+    "category": "海鲜",
+    "ingredients": ["虾", "干辣椒", "大蒜"],
+    "description": "虾肉质鲜嫩，干锅做法麻辣鲜香，越吃越香。",
+    "image": "https://x-61.github.io/show/menu_jpg/干锅虾.png"
+  },
+  {
+    "id": 22,
+    "name": "炒鸡肉",
+    "category": "鸡肉",
+    "ingredients": ["鸡肉", "大蒜", "盐"],
+    "description": "鸡肉鲜嫩，大火快炒，保留原汁原味，营养丰富。",
+    "image": "https://x-61.github.io/show/menu_jpg/炒鸡肉.png"
+  },
+  {
+    "id": 23,
+    "name": "青椒五花肉炒蛋",
+    "category": "猪肉",
+    "ingredients": ["青椒", "五花肉", "大蒜", "鸡蛋"],
+    "description": "青椒爽脆，五花肉肥而不腻，是一道经典的家常小炒。",
+    "image": "https://x-61.github.io/show/menu_jpg/青椒五花肉炒蛋.png"
+  },
+  {
+    "id": 24,
+    "name": "荷兰豆炒牛肉",
+    "category": "牛肉",
+    "ingredients": ["荷兰豆", "牛肉"],
+    "description": "荷兰豆脆嫩，牛肉鲜香",
+    "image": "https://x-61.github.io/show/menu_jpg/荷兰豆炒牛肉.png"
+  }
+]
