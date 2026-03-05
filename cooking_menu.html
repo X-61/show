@@ -559,6 +559,23 @@
             text-align: right;
         }
 
+        /* 新增：导入区域样式 */
+        .import-section {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        #import-url {
+            padding: 5px 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 12px;
+            flex: 1;
+            min-width: 200px;
+        }
+
         /* 空状态 */
         .empty-state {
             grid-column: 1 / -1;
@@ -609,12 +626,18 @@
         </div>
     </header>
 
-    <!-- 数据管理按钮（新增导入按钮） -->
+    <!-- 数据管理按钮（支持URL+本地导入） -->
     <div class="data-actions">
-        <button class="btn btn-secondary btn-xs" id="import-btn">
-            <i class="fas fa-upload"></i> 导入数据
-        </button>
-        <input type="file" id="import-file" accept=".json" style="display: none;">
+        <div class="import-section">
+            <input type="text" id="import-url" placeholder="输入JSON数据URL（支持远程导入）">
+            <button class="btn btn-secondary btn-xs" id="import-url-btn">
+                <i class="fas fa-globe"></i> URL导入
+            </button>
+            <button class="btn btn-secondary btn-xs" id="import-file-btn">
+                <i class="fas fa-upload"></i> 本地导入
+            </button>
+            <input type="file" id="import-file" accept=".json" style="display: none;">
+        </div>
         <button class="btn btn-secondary btn-xs" id="export-btn">
             <i class="fas fa-download"></i> 导出数据
         </button>
@@ -803,7 +826,7 @@
         </div>
     </section>
 
-    <!-- 新增：图片显示模式切换 -->
+    <!-- 图片显示模式切换 -->
     <section class="image-mode-toggle">
         <span>图片显示模式：</span>
         <button class="mode-btn active" id="normal-img-btn">正常图</button>
@@ -877,7 +900,7 @@
             "午餐建议营养丰富一些，晚餐以清淡易消化为主，更符合健康饮食原则。"
         ];
 
-        // 默认菜品数据（增加长描述测试）
+        // 默认菜品数据
         const defaultData = [
             { id: 1, name: "四季豆炒肉", category: "猪肉", ingredients: ["四季豆", "猪肉", "大蒜"], 
               description: "经典家常菜，四季豆脆嫩，猪肉鲜香。这道菜的关键是四季豆要先焯水，这样炒出来的四季豆既熟透又保持脆嫩口感，猪肉选择五花肉会更香，煸炒出油脂后加入四季豆翻炒，最后加少许生抽和盐调味即可。", image: DEFAULT_IMAGE },
@@ -902,7 +925,6 @@
             loadData();
             initUI();
             bindAllEvents();
-            // 绑定图片模式切换事件
             bindImageModeEvents();
         });
 
@@ -926,60 +948,126 @@
             }
         }
 
-        // 导入数据功能
-        function importData(file) {
+        // 通用数据验证函数（URL和文件导入共用）
+        function validateImportData(rawData) {
+            try {
+                // 确保是数组
+                if (!Array.isArray(rawData)) {
+                    throw new Error('导入数据格式错误，必须是数组类型！');
+                }
+                
+                // 验证每个菜品的必填字段（id、name、category、ingredients）
+                const validData = rawData.filter(dish => {
+                    const isValid = dish.id && dish.name && dish.category && Array.isArray(dish.ingredients);
+                    if (!isValid) {
+                        console.warn('跳过无效菜品数据：', dish);
+                    }
+                    return isValid;
+                });
+                
+                if (validData.length === 0) {
+                    throw new Error('未找到有效菜品数据，请检查数据格式！');
+                }
+                
+                return validData;
+            } catch (e) {
+                throw e;
+            }
+        }
+
+        // 通用数据合并/覆盖函数（URL和文件导入共用）
+        function processImportedData(validData) {
+            // 询问用户：覆盖现有数据 或 合并数据
+            const isOverwrite = confirm(
+                `找到 ${validData.length} 道有效菜品，是否覆盖现有数据？\n取消则合并（重复ID会替换）`
+            );
+            
+            if (isOverwrite) {
+                menuData = validData; // 覆盖
+            } else {
+                // 合并：重复ID替换，新ID添加
+                const existingIds = new Set(menuData.map(d => d.id));
+                validData.forEach(newDish => {
+                    if (existingIds.has(newDish.id)) {
+                        const idx = menuData.findIndex(d => d.id === newDish.id);
+                        menuData[idx] = newDish;
+                    } else {
+                        menuData.push(newDish);
+                    }
+                });
+            }
+            
+            // 保存并刷新界面
+            saveData();
+            refreshAllUI();
+            alert(`成功导入 ${validData.length} 道菜品！`);
+        }
+
+        // URL导入逻辑
+        async function importDataFromURL(url) {
+            if (!url.trim()) {
+                alert('请输入有效的URL地址！');
+                return;
+            }
+
+            try {
+                // 显示加载提示
+                const originalText = document.getElementById('import-url-btn').innerHTML;
+                document.getElementById('import-url-btn').innerHTML = '<i class="fas fa-spinner fa-spin"></i> 导入中...';
+                document.getElementById('import-url-btn').disabled = true;
+
+                // 发起请求（添加超时处理）
+                const controller = new AbortController();
+                const timeoutId = setTimeout(() => controller.abort(), 10000); // 10秒超时
+
+                const response = await fetch(url, {
+                    method: 'GET',
+                    signal: controller.signal,
+                    headers: {
+                        'Accept': 'application/json'
+                    }
+                });
+
+                clearTimeout(timeoutId);
+
+                if (!response.ok) {
+                    throw new Error(`网络请求失败：${response.status} ${response.statusText}`);
+                }
+
+                const rawData = await response.json();
+                const validData = validateImportData(rawData);
+                processImportedData(validData);
+
+            } catch (e) {
+                console.error('URL导入失败：', e);
+                // 区分不同错误类型给出提示
+                if (e.name === 'AbortError') {
+                    alert(`导入失败：请求超时！\n请检查网络或URL是否可达。`);
+                } else if (e.message.includes('CORS') || e.message.includes('跨域')) {
+                    alert(`导入失败：跨域访问被拒绝！\n请确保目标URL支持跨域，或使用本地文件导入。`);
+                } else {
+                    alert(`导入失败：${e.message}\n请确保URL指向有效的JSON文件。`);
+                }
+            } finally {
+                // 恢复按钮状态
+                document.getElementById('import-url-btn').innerHTML = '<i class="fas fa-globe"></i> URL导入';
+                document.getElementById('import-url-btn').disabled = false;
+                // 清空URL输入框
+                document.getElementById('import-url').value = '';
+            }
+        }
+
+        // 本地文件导入逻辑
+        function importDataFromFile(file) {
             const reader = new FileReader();
             
             reader.onload = function(e) {
                 try {
-                    const importedData = JSON.parse(e.target.result);
-                    
-                    // 验证数据格式：必须是数组
-                    if (!Array.isArray(importedData)) {
-                        throw new Error('导入数据格式错误，必须是数组类型！');
-                    }
-                    
-                    // 验证每个菜品的必填字段（id、name、category、ingredients）
-                    const validData = importedData.filter(dish => {
-                        const isValid = dish.id && dish.name && dish.category && Array.isArray(dish.ingredients);
-                        if (!isValid) {
-                            console.warn('跳过无效菜品数据：', dish);
-                        }
-                        return isValid;
-                    });
-                    
-                    if (validData.length === 0) {
-                        alert('未找到有效菜品数据，请检查文件格式！');
-                        return;
-                    }
-                    
-                    // 询问用户：覆盖现有数据 或 合并数据
-                    const isOverwrite = confirm(
-                        `找到 ${validData.length} 道有效菜品，是否覆盖现有数据？\n取消则合并（重复ID会替换）`
-                    );
-                    
-                    if (isOverwrite) {
-                        menuData = validData; // 覆盖
-                    } else {
-                        // 合并：重复ID替换，新ID添加
-                        const existingIds = new Set(menuData.map(d => d.id));
-                        validData.forEach(newDish => {
-                            if (existingIds.has(newDish.id)) {
-                                const idx = menuData.findIndex(d => d.id === newDish.id);
-                                menuData[idx] = newDish;
-                            } else {
-                                menuData.push(newDish);
-                            }
-                        });
-                    }
-                    
-                    // 保存并刷新界面
-                    saveData();
-                    refreshAllUI();
-                    alert(`成功导入 ${validData.length} 道菜品！`);
-                    
+                    const rawData = JSON.parse(e.target.result);
+                    const validData = validateImportData(rawData);
+                    processImportedData(validData);
                 } catch (e) {
-                    console.error('导入数据失败：', e);
+                    console.error('文件导入失败：', e);
                     alert(`导入失败：${e.message}（请确保文件是有效的JSON格式）`);
                 }
             };
@@ -987,6 +1075,7 @@
             reader.readAsText(file);
         }
 
+        // 导出数据功能
         function exportData() {
             const blob = new Blob([JSON.stringify(menuData, null, 2)], { type: 'application/json' });
             const a = document.createElement('a');
@@ -997,6 +1086,7 @@
             alert('数据导出成功！');
         }
 
+        // 清空数据
         function clearData() {
             if (confirm('确定清空所有数据？此操作不可恢复！')) {
                 localStorage.removeItem(STORAGE_KEY);
@@ -1022,7 +1112,7 @@
             updateSelectionStats();
         }
 
-        // 渲染菜品展示列表（改造：支持图片模式和描述展开）
+        // 渲染菜品展示列表
         function renderMenuList(filteredData = null) {
             const container = document.getElementById('menu-container');
             const data = filteredData || menuData;
@@ -1048,7 +1138,7 @@
                 const isLongDesc = desc.length > DESC_TRUNCATE_LENGTH;
                 const truncatedDesc = isLongDesc ? desc.substring(0, DESC_TRUNCATE_LENGTH) + '...' : desc;
                 
-                // 菜品卡片HTML（新增图片模式和描述展开逻辑）
+                // 菜品卡片HTML
                 card.innerHTML = `
                     <img src="${dish.image || DEFAULT_IMAGE}" alt="${dish.name}" class="card-img ${isThumbnailMode ? 'thumbnail' : ''}">
                     <div class="card-content">
@@ -1329,11 +1419,19 @@
 
         // ========== 事件绑定 ==========
         function bindAllEvents() {
-            // 导入数据按钮事件
-            document.getElementById('import-btn').addEventListener('click', function() {
+            // ========== 导入相关事件 ==========
+            // URL导入按钮事件
+            document.getElementById('import-url-btn').addEventListener('click', function() {
+                const url = document.getElementById('import-url').value.trim();
+                importDataFromURL(url);
+            });
+
+            // 本地文件导入按钮事件
+            document.getElementById('import-file-btn').addEventListener('click', function() {
                 document.getElementById('import-file').click();
             });
-            // 文件选择事件
+
+            // 本地文件选择事件
             document.getElementById('import-file').addEventListener('change', function(e) {
                 const file = e.target.files[0];
                 if (!file) return;
@@ -1341,16 +1439,19 @@
                 // 校验文件类型（仅允许JSON）
                 if (file.type !== 'application/json' && !file.name.endsWith('.json')) {
                     alert('请选择JSON格式的文件！');
-                    this.value = ''; // 清空选择，避免重复导入
+                    this.value = ''; // 清空选择
                     return;
                 }
                 
-                importData(file);
+                importDataFromFile(file);
                 this.value = ''; // 清空选择，方便再次导入
             });
 
-            // 数据管理按钮（原有）
+            // ========== 其他事件 ==========
+            // 导出数据
             document.getElementById('export-btn').addEventListener('click', exportData);
+            
+            // 清空数据
             document.getElementById('clear-btn').addEventListener('click', clearData);
 
             // 筛选标签事件
@@ -1565,7 +1666,7 @@
             });
         }
 
-        // 新增：绑定图片模式切换事件
+        // 绑定图片模式切换事件
         function bindImageModeEvents() {
             const normalBtn = document.getElementById('normal-img-btn');
             const thumbnailBtn = document.getElementById('thumbnail-img-btn');
