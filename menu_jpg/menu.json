@@ -34,7 +34,7 @@
   {
     "id": 5,
     "name": "莴笋炒五花肉",
-    "category": "猪肉",
+    "category": "猪肉"，
     "ingredients": ["莴笋", "五花肉", "大蒜"],
     "description": "莴笋脆嫩爽口，五花肉肥而不腻，是一道下饭的家常小炒。",
     "image": "https://x-61.github.io/show/menu_jpg/莴笋炒五花肉.png"
@@ -58,9 +58,9 @@
   {
     "id": 8,
     "name": "干煸四季豆",
-    "category": "素菜",
-    "ingredients": ["四季豆", "干辣椒", "大蒜"],
-    "description": "四季豆煸至微焦，麻辣鲜香，是一道经典的川味素菜。",
+    "category": "猪肉",
+    "ingredients": ["四季豆", "干辣椒"， "大蒜",  "猪肉"],
+    "description": "四季豆煸至微焦，麻辣鲜香，是一道经典的川味菜。",
     "image": "https://x-61.github.io/show/menu_jpg/干煸四季豆.png"
   },
   {
